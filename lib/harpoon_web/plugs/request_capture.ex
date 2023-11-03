@@ -1,9 +1,11 @@
 defmodule HarpoonWeb.Plugs.RequestCapture do
+  @moduledoc false
+  @behaviour Plug
+
   alias Phoenix.PubSub
 
   require Logger
 
-  @behaviour Plug
   def init(opts), do: opts
 
   def call(%Plug.Conn{path_info: path_info} = conn, _) do

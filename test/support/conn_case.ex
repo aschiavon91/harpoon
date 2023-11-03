@@ -20,14 +20,14 @@ defmodule HarpoonWeb.ConnCase do
   using do
     quote do
       # The default endpoint for testing
-      @endpoint HarpoonWeb.Endpoint
-
       use HarpoonWeb, :verified_routes
 
       # Import conveniences for testing with connections
-      import Plug.Conn
-      import Phoenix.ConnTest
       import HarpoonWeb.ConnCase
+      import Phoenix.ConnTest
+      import Plug.Conn
+
+      @endpoint HarpoonWeb.Endpoint
     end
   end
 

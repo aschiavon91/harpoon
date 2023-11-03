@@ -1,5 +1,7 @@
 defmodule Harpoon.Models.Request do
+  @moduledoc false
   use Ecto.Schema
+
   import Ecto.Changeset
 
   @timestamps_opts [type: :utc_datetime_usec]

@@ -18,12 +18,12 @@ defmodule Harpoon.DataCase do
 
   using do
     quote do
-      alias Harpoon.Repo
-
       import Ecto
       import Ecto.Changeset
       import Ecto.Query
       import Harpoon.DataCase
+
+      alias Harpoon.Repo
     end
   end
 

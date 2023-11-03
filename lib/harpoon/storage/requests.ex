@@ -1,4 +1,5 @@
 defmodule Harpoon.Storage.Requests do
+  @moduledoc false
   import Ecto.Query
 
   alias Harpoon.Models.Request
