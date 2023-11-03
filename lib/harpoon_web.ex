@@ -24,9 +24,9 @@ defmodule HarpoonWeb do
       use Phoenix.Router, helpers: false
 
       # Import common connection and controller functions to use in pipelines
-      import Plug.Conn
       import Phoenix.Controller
       import Phoenix.LiveView.Router
+      import Plug.Conn
     end
   end
 
@@ -42,8 +42,8 @@ defmodule HarpoonWeb do
         formats: [:html, :json],
         layouts: [html: HarpoonWeb.Layouts]
 
-      import Plug.Conn
       import HarpoonWeb.Gettext
+      import Plug.Conn
 
       unquote(verified_routes())
     end
@@ -82,10 +82,10 @@ defmodule HarpoonWeb do
   defp html_helpers do
     quote do
       # HTML escaping functionality
-      import Phoenix.HTML
       # Core UI components and translation
       import HarpoonWeb.CoreComponents
       import HarpoonWeb.Gettext
+      import Phoenix.HTML
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS

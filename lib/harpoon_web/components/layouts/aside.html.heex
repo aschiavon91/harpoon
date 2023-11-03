@@ -9,7 +9,8 @@
         <li>
           <% link_classes =
             if req.id == @rid,
-              do: "text-gray-900 bg-gray-200 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700",
+              do:
+                "text-gray-900 bg-gray-200 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700",
               else: "text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700" %>
           <.link
             patch={~p"/?sid=#{req.sid}&rid=#{req.id}"}

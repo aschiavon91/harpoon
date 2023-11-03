@@ -1,5 +1,7 @@
 defmodule HarpoonWeb.HomeLive do
+  @moduledoc false
   use HarpoonWeb, :live_view
+
   alias Harpoon.Storage.Requests
 
   @impl true
