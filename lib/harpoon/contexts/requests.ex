@@ -1,4 +1,4 @@
-defmodule Harpoon.Storage.Requests do
+defmodule Harpoon.Contexts.Requests do
   @moduledoc false
   import Ecto.Query
 
