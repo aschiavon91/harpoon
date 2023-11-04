@@ -2,28 +2,20 @@ defmodule HarpoonWeb.HomeLive do
   @moduledoc false
   use HarpoonWeb, :live_view
 
-  alias Harpoon.Storage.Requests
+  alias Harpoon.Contexts.Requests
 
   @impl true
   def mount(params, %{"sid" => sid}, socket) do
     if connected?(socket), do: Phoenix.PubSub.subscribe(Harpoon.PubSub, "requests:#{sid}")
-    socket = assign_all(socket, sid, params["rid"])
-
+    requests = Requests.list_by_sid(sid)
+    socket = assign_state(socket, requests, sid, params["rid"])
     {:ok, socket}
   end
 
   @impl true
   def handle_params(%{"sid" => sid} = params, _uri, socket) do
-    rid = params["rid"]
-    current = get_current_request(socket, rid)
-
-    socket =
-      socket
-      |> assign(sid: sid)
-      |> assign(rid: rid)
-      |> assign(current: current)
-      |> assign(page_title: "[Harpoon] SID: #{sid}")
-
+    requests = socket.assigns[:requests]
+    socket = assign_state(socket, requests, sid, params["rid"])
     {:noreply, socket}
   end
 
@@ -34,19 +26,27 @@ defmodule HarpoonWeb.HomeLive do
     {:noreply, socket}
   end
 
-  defp assign_all(socket, sid, rid) do
-    current = get_current_request(socket, rid)
+  defp assign_state(socket, requests, sid, rid) do
+    current = get_current_request(requests, rid)
+    new_rid = Map.get(current || %{}, :id)
 
     socket
-    |> assign(sid: sid)
-    |> assign(rid: rid)
-    |> assign(requests: Requests.list_by_sid(sid))
-    |> assign(current: current)
+    |> assign(:sid, sid)
+    |> assign(:rid, new_rid)
+    |> assign(:requests, requests)
+    |> assign(:current, current)
     |> assign(page_title: "[Harpoon] SID: #{sid}")
+    |> then(&if(new_rid && is_nil(rid), do: push_navigate(&1, to: ~p"/?sid=#{sid}&rid=#{new_rid}"), else: &1))
   end
 
-  defp get_current_request(socket, rid) do
-    socket.assigns[:requests]
+  defp get_current_request(requests, nil) do
+    requests
+    |> Kernel.||([])
+    |> List.first()
+  end
+
+  defp get_current_request(requests, rid) do
+    requests
     |> Kernel.||([])
     |> Enum.find(&(&1.id == rid))
   end

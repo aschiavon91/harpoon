@@ -1,0 +1,28 @@
+<% link_classes =
+  if @req.id == @current.id,
+    do: "text-gray-900 bg-gray-200 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700",
+    else: "text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
+
+span_classes =
+  case @req.method do
+    "GET" -> "bg-green-300 text-green-800 dark:bg-green-900 dark:text-green-300"
+    "HEAD" -> "bg-lime-100 text-lime-800 dark:bg-lime-900 dark:text-lime-300"
+    "POST" -> "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300"
+    "PUT" -> "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300"
+    "PATCH" -> "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
+    "DELETE" -> "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
+    "OPTIONS" -> "bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-300"
+  end %>
+
+<li>
+  <.link
+    patch={~p"/?sid=#{@req.sid}&rid=#{@req.id}"}
+    class={"flex items-center p-2# rounded-lg group #{link_classes}"}
+  >
+    <span class="flex-1 ml-3 whitespace-nowrap"><%= @req.path %></span>
+    <span class={"text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full #{span_classes}"}>
+      <%= @req.method %>
+    </span>
+    <br />
+  </.link>
+</li>
