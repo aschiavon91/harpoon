@@ -2,7 +2,7 @@ defmodule Harpoon.Workers.CapturedRequestsWorker do
   @moduledoc false
   use GenServer
 
-  alias Harpoon.Storage.Requests
+  alias Harpoon.Contexts.Requests
 
   require Logger
 

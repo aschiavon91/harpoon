@@ -1,4 +1,4 @@
-defmodule HarpoonWeb.Plugs.RequestCapture do
+defmodule HarpoonWeb.Plugs.CaptureRequestPlug do
   @moduledoc false
   @behaviour Plug
 
@@ -31,7 +31,7 @@ defmodule HarpoonWeb.Plugs.RequestCapture do
       {:ok, body, conn} ->
         req = %{
           sid: sid,
-          path: String.replace(conn.request_path, "/#{sid}", ""),
+          path: parse_path(conn.request_path, sid),
           method: conn.method,
           headers: Map.new(conn.req_headers),
           body: body
@@ -41,6 +41,15 @@ defmodule HarpoonWeb.Plugs.RequestCapture do
 
       err ->
         err
+    end
+  end
+
+  defp parse_path(path, sid) do
+    path
+    |> String.replace("/#{sid}", "")
+    |> case do
+      "" -> "/"
+      other -> other
     end
   end
 end

@@ -1,10 +1,96 @@
-<div class="p-4">
-  <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-14">
-    <div class="flex items-center justify-center h-48 mb-4 rounded bg-gray-50 dark:bg-gray-800">
-      <%= inspect(@current) %>
+<div class="grid grid-cols-1 px-4 pt-6 mt-12 xl:grid-cols-2 xl:gap-4 dark:bg-gray-900">
+  <div class="col-span-1">
+    <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+      <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+        <caption class="p-5 text-lg font-semibold text-left text-gray-900 bg-white dark:text-white dark:bg-gray-800">
+          Request Details
+        </caption>
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+          <tr>
+            <th scope="col" class="px-6 py-3">
+              Name
+            </th>
+            <th scope="col" class="px-6 py-3">
+              Value
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            :for={{info_name, info_value} <- Map.take(@current, [:id, :method, :path])}
+            class="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+          >
+            <th
+              scope="row"
+              class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+            >
+              <code><%= info_name %></code>
+            </th>
+            <td class="px-6 py-4">
+              <code><%= info_value %></code>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-
-    <div class="flex items-center justify-center h-48 mt-4 rounded bg-gray-50 dark:bg-gray-800">
+  </div>
+  <div class="col-span-1">
+    <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+      <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+        <caption class="p-5 text-lg font-semibold text-left text-gray-900 bg-white dark:text-white dark:bg-gray-800">
+          Headers
+        </caption>
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+          <tr>
+            <th scope="col" class="px-6 py-3">
+              Name
+            </th>
+            <th scope="col" class="px-6 py-3">
+              Value
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            :for={{header_name, header_value} <- @current.headers}
+            class="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+          >
+            <th
+              scope="row"
+              class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+            >
+              <code><%= header_name %></code>
+            </th>
+            <td class="px-6 py-4">
+              <code><%= header_value %></code>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div :if={@current.body} class="col-span-1">
+    <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+      <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+        <caption class="p-5 text-lg font-semibold text-left text-gray-900 bg-white dark:text-white dark:bg-gray-800">
+          Body
+        </caption>
+        <tbody>
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <th
+              scope="row"
+              class="px-5 pb-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+            >
+              <textarea
+                rows="4"
+                class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                readonly
+                disabled
+              ><%= @current.body %></textarea>
+            </th>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </div>

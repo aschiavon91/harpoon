@@ -6,23 +6,7 @@
   <div class="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800">
     <ul class="space-y-2 font-medium">
       <%= for req <- @requests do %>
-        <li>
-          <% link_classes =
-            if req.id == @rid,
-              do:
-                "text-gray-900 bg-gray-200 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700",
-              else: "text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700" %>
-          <.link
-            patch={~p"/?sid=#{req.sid}&rid=#{req.id}"}
-            class={"flex items-center p-2# rounded-lg group #{link_classes}"}
-          >
-            <span class="flex-1 ml-3 whitespace-nowrap"><%= req.path %></span>
-            <span class="inline-flex items-center justify-center px-2 ml-3 text-sm font-medium text-gray-800 bg-gray-100 rounded-full dark:bg-gray-700 dark:text-gray-300">
-              <%= req.method %>
-            </span>
-            <br />
-          </.link>
-        </li>
+        <.aside_item req={req} current={@current} />
       <% end %>
     </ul>
   </div>
