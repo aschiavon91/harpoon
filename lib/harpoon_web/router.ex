@@ -8,7 +8,6 @@ defmodule HarpoonWeb.Router do
     plug :put_root_layout, html: {HarpoonWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
-    plug :ensure_session_id
   end
 
   pipeline :api do
@@ -43,26 +42,5 @@ defmodule HarpoonWeb.Router do
       live_dashboard "/dashboard", metrics: HarpoonWeb.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview
     end
-  end
-
-  def ensure_session_id(%Plug.Conn{params: %{"sid" => sid}} = conn, _) do
-    case Ecto.UUID.cast(sid) do
-      {:ok, _} -> sid
-      :error -> Ecto.UUID.generate()
-    end
-
-    conn
-    |> put_session(:sid, sid)
-    |> assign(:sid, sid)
-  end
-
-  def ensure_session_id(%Plug.Conn{} = conn, _) do
-    sid = get_session(conn, :sid) || Ecto.UUID.generate()
-
-    conn
-    |> put_session(:sid, sid)
-    |> assign(:sid, sid)
-    |> redirect(to: "/?sid=#{sid}")
-    |> halt()
   end
 end

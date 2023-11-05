@@ -23,6 +23,20 @@ defmodule Harpoon.Contexts.Requests do
     end
   end
 
+  def delete(request) do
+    Repo.delete(request)
+  end
+
+  def delete_all_by_sid(sid) do
+    Request
+    |> where(sid: ^sid)
+    |> Repo.delete_all()
+    |> case do
+      {deleted, _} -> {:ok, deleted}
+      err -> err
+    end
+  end
+
   defp broadcast(req) do
     Harpoon.PubSub
     |> PubSub.broadcast("requests:#{req.sid}", req)
