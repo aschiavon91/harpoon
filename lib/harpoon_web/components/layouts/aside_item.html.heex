@@ -1,5 +1,5 @@
 <% link_classes =
-  if @req.id == Map.get((@current || %{}), :id),
+  if @req.id == Map.get(@current || %{}, :id),
     do: "text-gray-900 bg-gray-200 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700",
     else: "text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
 
@@ -14,7 +14,7 @@ span_classes =
     "OPTIONS" -> "bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-300"
   end %>
 
-<li>
+<li id={@id}>
   <ul class={"grid grid-rows grid-flow-col gap-1 rounded px-2 py-1 #{link_classes}"}>
     <.link class="row-span-2 col-span-2" patch={~p"/?sid=#{@req.sid}&rid=#{@req.id}"}>
       <div>
@@ -29,7 +29,11 @@ span_classes =
     </.link>
 
     <div class="row-span-2 col-span-1 self-center justify-self-end">
-      <button type="button" phx-click="delete" phx-value-id={@req.id}>
+      <button
+        type="button"
+        phx-click={JS.push("delete", value: %{id: @id})}
+        data-confirm="Are you sure?"
+      >
         <svg
           class="w-5 h-5 fill-gray-400 hover:fill-red-700"
           aria-hidden="true"
