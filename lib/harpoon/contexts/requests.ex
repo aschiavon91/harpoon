@@ -23,8 +23,8 @@ defmodule Harpoon.Contexts.Requests do
     end
   end
 
-  def delete(request) do
-    Repo.delete(request)
+  def delete_by_id(id) do
+    Repo.delete(%Request{id: id})
   end
 
   def delete_all_by_sid(sid) do

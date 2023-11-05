@@ -9,11 +9,9 @@ defmodule HarpoonWeb.HomeLive do
   embed_templates("partials/*")
 
   @impl true
-  def mount(%{"sid" => sid} = params, _, socket) do
+  def mount(%{"sid" => sid}, _, socket) do
     if connected?(socket), do: Phoenix.PubSub.subscribe(Harpoon.PubSub, "requests:#{sid}")
-    requests = Requests.list_by_sid(sid)
-    socket = assign_state(socket, requests, sid, params["rid"])
-    {:ok, socket}
+    {:ok, stream_configure(socket, :requests, dom_id: &"requests-#{&1.id}")}
   end
 
   @impl true
@@ -23,8 +21,11 @@ defmodule HarpoonWeb.HomeLive do
 
   @impl true
   def handle_params(%{"sid" => sid} = params, _uri, socket) do
-    requests = socket.assigns[:requests]
-    socket = assign_state(socket, requests, sid, params["rid"])
+    requests = Requests.list_by_sid(sid)
+
+    socket =
+      assign_state(socket, requests, sid, params["rid"])
+
     {:noreply, socket}
   end
 
@@ -43,12 +44,11 @@ defmodule HarpoonWeb.HomeLive do
 
   @impl true
   def handle_info(req, socket) do
-    requests = socket.assigns[:requests] || []
     current = socket.assigns[:current]
 
     socket =
       socket
-      |> assign(:requests, [req | requests])
+      |> stream_insert(:requests, req, at: 0)
       |> assign(:current, if(current, do: current, else: req))
       |> put_flash(:info, "Ahoy! A new request was hooked!")
 
@@ -56,32 +56,22 @@ defmodule HarpoonWeb.HomeLive do
   end
 
   @impl true
-  def handle_event("delete", %{"id" => id}, socket) do
-    requests = socket.assigns[:requests]
-    idx = Enum.find_index(requests, &(&1.id == id))
+  def handle_event("delete", %{"id" => <<"requests-" <> id>> = dom_id}, socket) do
+    case Requests.delete_by_id(id) do
+      {:ok, _} ->
+        sid = socket.assigns[:sid]
 
-    with {%{} = to_delete, requests} <- List.pop_at(requests, idx),
-         {:ok, _} <- Requests.delete(to_delete) do
-      sid = socket.assigns[:sid]
-
-      socket =
         socket
+        |> stream_delete_by_dom_id(:requests, dom_id)
         |> put_flash(:info, "#{id} deleted!")
-        |> assign(:requests, requests)
         |> assign(:current, nil)
         |> push_navigate(to: ~p"/?sid=#{sid}")
+        |> then(&{:noreply, &1})
 
-      {:noreply, socket}
-    else
       error ->
         Logger.error("delete error #{inspect(error)}")
         {:noreply, put_flash(socket, :error, "error deleting #{id}")}
     end
-  end
-
-  @impl true
-  def handle_event("delete_all", _, %{assigns: %{requests: []}} = socket) do
-    {:noreply, put_flash(socket, :warn, "nothing to delete")}
   end
 
   @impl true
@@ -92,7 +82,7 @@ defmodule HarpoonWeb.HomeLive do
       {:ok, deleted} ->
         {:noreply,
          socket
-         |> assign(:requests, [])
+         |> stream(:requests, [], reset: true)
          |> assign(:current, nil)
          |> then(&if(deleted > 0, do: put_flash(&1, :info, "all requests deleted!"), else: &1))}
 
@@ -106,12 +96,12 @@ defmodule HarpoonWeb.HomeLive do
     new_rid = Map.get(current || %{}, :id)
 
     socket
+    |> stream(:requests, requests)
     |> assign(:sid, sid)
     |> assign(:rid, new_rid)
-    |> assign(:requests, requests)
     |> assign(:current, current)
     |> assign(page_title: "[Harpoon] SID: #{sid}")
-    |> then(&if(new_rid && is_nil(rid), do: push_navigate(&1, to: ~p"/?sid=#{sid}&rid=#{new_rid}"), else: &1))
+    |> then(&if(is_nil(rid) && new_rid, do: push_navigate(&1, to: ~p"/?sid=#{sid}&rid=#{new_rid}"), else: &1))
   end
 
   defp get_current_request(requests, nil) do
