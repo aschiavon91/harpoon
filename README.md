@@ -1,6 +1,9 @@
 # Harpoon
 
+<img src="priv/static/images/logo-high.png" width="250"/>
+
 A simplified version of a tool similar to webhook.site, built with Elixir and Phoenix LiveView.
+
 This tool allows users to easily inspect HTTP requests in real-time.
 
 ## Table of Contents
