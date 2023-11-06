@@ -1,9 +1,27 @@
-version: "3.2"
+version: "3"
 services:
   db:
     image: postgres:16.0
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: harpoon_prod
+
+  migration:
+    depends_on:
+      - db
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file: .prod.env
+    command: ["/app/bin/migrate"]
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - migration
+    env_file: .prod.env
     ports:
-      - 5432:5432
+      - 4000:4000
