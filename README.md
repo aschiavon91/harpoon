@@ -6,6 +6,11 @@ A simplified version of a tool similar to webhook.site, built with Elixir and Ph
 
 This tool allows users to easily inspect HTTP requests in real-time.
 
+## just run it
+```
+docker compose up -d
+```
+
 ## Table of Contents
 
 - [Introduction](#introduction)
