@@ -4,6 +4,29 @@ defmodule Harpoon.Models.Request do
 
   import Ecto.Changeset
 
+  @fields ~w(
+    sid
+    path
+    method
+    headers
+    body
+    query_params
+    cookies
+    host
+    remote_ip
+    remote_port
+    http_version
+    body_length
+  )a
+
+  @required_fields ~w(
+    sid
+    path
+    method
+    headers
+    host
+  )a
+
   @timestamps_opts [type: :utc_datetime_usec]
 
   @derive Jason.Encoder
@@ -14,11 +37,20 @@ defmodule Harpoon.Models.Request do
     field :method, :string
     field :headers, :map
     field :body, :string
+    field :query_params, :map
+    field :cookies, :map
+    field :host, :string
+    field :remote_ip, :string
+    field :remote_port, :string
+    field :http_version, :string
+    field :body_length, :integer
 
     timestamps()
   end
 
   def changeset(struct \\ %__MODULE__{}, params) do
-    cast(struct, params, ~w(sid path method headers body)a)
+    struct
+    |> cast(params, @fields)
+    |> validate_required(@required_fields)
   end
 end

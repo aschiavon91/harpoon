@@ -29,19 +29,37 @@ defmodule HarpoonWeb.Plugs.CaptureRequestPlug do
   defp conn_to_request(conn, sid) do
     case Plug.Conn.read_body(conn) do
       {:ok, body, conn} ->
-        req = %{
-          sid: sid,
-          path: parse_path(conn.request_path, sid),
-          method: conn.method,
-          headers: Map.new(conn.req_headers),
-          body: body
-        }
+        req =
+          Map.merge(
+            %{
+              sid: sid,
+              path: parse_path(conn.request_path, sid),
+              headers: Map.new(conn.req_headers),
+              body: body,
+              method: conn.method,
+              query_params: conn.query_params,
+              host: conn.host,
+              cookies: conn.req_cookies
+            },
+            parse_from_adapter_data(conn.adapter)
+          )
 
         {:ok, req, conn}
 
       err ->
         err
     end
+  end
+
+  defp parse_from_adapter_data(
+         {Plug.Cowboy.Conn, %{version: version, peer: {peer_ip, peer_port}, body_length: body_length}}
+       ) do
+    %{
+      remote_ip: to_string(:inet_parse.ntoa(peer_ip)),
+      remote_port: to_string(peer_port),
+      body_length: body_length,
+      http_version: to_string(version)
+    }
   end
 
   defp parse_path(path, sid) do
