@@ -1,4 +1,4 @@
 <div class="grid grid-cols-1 px-4 pt-6 mt-12 xl:grid-cols-2 xl:gap-4 dark:bg-gray-900">
-  <.without_current :if={!@current} url={url(~p"/#{@sid}")}/>
+  <.without_current :if={!@current} url={url(~p"/#{@sid}")} />
   <.with_current :if={@current} current={@current} />
 </div>

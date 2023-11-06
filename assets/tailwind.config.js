@@ -1,5 +1,6 @@
 // See the Tailwind configuration guide for advanced usage
 // https://tailwindcss.com/docs/configuration
+/** @type {import('tailwindcss').Config} */
 
 const plugin = require("tailwindcss/plugin")
 const fs = require("fs")
@@ -8,9 +9,9 @@ const path = require("path")
 module.exports = {
   content: [
     "./js/**/*.js",
+    "./node_modules/flowbite/**/*.js",
     "../lib/harpoon_web.ex",
     "../lib/harpoon_web/**/*.*ex",
-    "./node_modules/flowbite/**/*.js"
   ],
   theme: {
     extend: {
