@@ -1,14 +1,14 @@
 <% request_fields =
   ~w(id method path host remote_ip remote_port http_version body_length)a %>
-<.data_table collection_name="Request Details" data={Map.take(@current, request_fields)} />
+<.data_table collection_name="Request Details" data={Map.take(@request, request_fields)} />
 <.data_table
-  :if={@current.query_params != %{}}
+  :if={@request.query_params != %{}}
   collection_name="Query Parameters"
-  data={@current.query_params}
+  data={@request.query_params}
 />
-<.data_table :if={@current.cookies != %{}} collection_name="Cookies" data={@current.cookies} />
-<.data_table :if={@current.headers != %{}} collection_name="Headers" data={@current.headers} />
-<div :if={@current.body} class="col-span-1">
+<.data_table :if={@request.cookies != %{}} collection_name="Cookies" data={@request.cookies} />
+<.data_table :if={@request.headers != %{}} collection_name="Headers" data={@request.headers} />
+<div :if={@request.body} class="col-span-1">
   <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
     <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
       <caption class="p-5 text-lg font-semibold text-left text-gray-900 bg-white dark:text-white dark:bg-gray-800">
@@ -26,7 +26,7 @@
               readonly
               disabled
             >
-              <%= @current.body %>
+              <%= @request.body %>
             </textarea>
           </th>
         </tr>

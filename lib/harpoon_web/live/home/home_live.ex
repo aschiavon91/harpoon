@@ -22,11 +22,7 @@ defmodule HarpoonWeb.HomeLive do
   @impl true
   def handle_params(%{"sid" => sid} = params, _uri, socket) do
     requests = Requests.list_by_sid(sid)
-
-    socket =
-      assign_state(socket, requests, sid, params["rid"])
-
-    {:noreply, socket}
+    {:noreply, assign_state(socket, requests, sid, params["rid"])}
   end
 
   @impl true
