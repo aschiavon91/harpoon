@@ -22,11 +22,7 @@ defmodule HarpoonWeb.HomeLive do
   @impl true
   def handle_params(%{"sid" => sid} = params, _uri, socket) do
     requests = Requests.list_by_sid(sid)
-
-    socket =
-      assign_state(socket, requests, sid, params["rid"])
-
-    {:noreply, socket}
+    {:noreply, assign_state(socket, requests, sid, params["rid"])}
   end
 
   @impl true
@@ -44,12 +40,14 @@ defmodule HarpoonWeb.HomeLive do
 
   @impl true
   def handle_info(req, socket) do
-    current = socket.assigns[:current]
+    current = socket.assigns[:current] || req
+    sid = socket.assigns[:sid]
 
     socket =
       socket
       |> stream_insert(:requests, req, at: 0)
-      |> assign(:current, if(current, do: current, else: req))
+      |> assign(:current, current)
+      |> push_navigate(to: ~p"/?sid=#{sid}&rid=#{current.id}")
       |> put_flash(:info, "Ahoy! A new request was hooked!")
 
     {:noreply, socket}
@@ -84,6 +82,7 @@ defmodule HarpoonWeb.HomeLive do
          socket
          |> stream(:requests, [], reset: true)
          |> assign(:current, nil)
+         |> push_navigate(to: ~p"/?sid=#{sid}")
          |> then(&if(deleted > 0, do: put_flash(&1, :info, "all requests deleted!"), else: &1))}
 
       {:error, _} ->
