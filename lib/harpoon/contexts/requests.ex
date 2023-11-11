@@ -18,13 +18,18 @@ defmodule Harpoon.Contexts.Requests do
     |> Request.changeset()
     |> Repo.insert()
     |> case do
-      {:ok, req} -> broadcast(req)
+      {:ok, req} -> broadcast(req.sid, {:created, req})
       err -> err
     end
   end
 
-  def delete_by_id(id) do
-    Repo.delete(%Request{id: id})
+  def delete(req) do
+    req
+    |> Repo.delete()
+    |> case do
+      {:ok, _} -> broadcast(req.sid, {:deleted, req})
+      err -> err
+    end
   end
 
   def delete_all_by_sid(sid) do
@@ -32,16 +37,16 @@ defmodule Harpoon.Contexts.Requests do
     |> where(sid: ^sid)
     |> Repo.delete_all()
     |> case do
-      {deleted, _} -> {:ok, deleted}
+      {deleted, _} -> broadcast(sid, {:all_deleted, deleted})
       err -> err
     end
   end
 
-  defp broadcast(req) do
+  defp broadcast(sid, data) do
     Harpoon.PubSub
-    |> PubSub.broadcast("requests:#{req.sid}", req)
+    |> PubSub.broadcast("requests:#{sid}", data)
     |> case do
-      :ok -> {:ok, req}
+      :ok -> {:ok, data}
       err -> err
     end
   end
