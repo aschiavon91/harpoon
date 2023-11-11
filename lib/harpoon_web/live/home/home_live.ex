@@ -58,13 +58,8 @@ defmodule HarpoonWeb.HomeLive do
     sid = socket.assigns[:sid]
 
     case Requests.delete_all_by_sid(sid) do
-      {:ok, deleted} ->
-        {:noreply,
-         socket
-         |> stream(:requests, [], reset: true)
-         |> assign(:current, nil)
-         |> push_navigate(to: ~p"/?sid=#{sid}")
-         |> then(&if(deleted > 0, do: put_flash(&1, :info, "all requests deleted!"), else: &1))}
+      {:ok, _deleted} ->
+        {:noreply, socket}
 
       {:error, _} ->
         {:noreply, put_flash(socket, :error, "error deleting all requests")}
@@ -116,7 +111,7 @@ defmodule HarpoonWeb.HomeLive do
       |> stream(:requests, [], reset: true)
       |> assign(:current, nil)
       |> push_navigate(to: ~p"/?sid=#{sid}")
-      |> then(& if deleted > 0, do: put_flash(&1, :info, "all requests deleted!"), else: &1)
+      |> then(&if deleted > 0, do: put_flash(&1, :info, "all requests deleted!"), else: &1)
 
     {:noreply, socket}
   end
