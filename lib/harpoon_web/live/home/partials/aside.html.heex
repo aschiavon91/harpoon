@@ -1,0 +1,21 @@
+<aside id="logo-sidebar" class="sidebar" aria-label="Sidebar">
+  <div class="flex flex-col h-full overflow-y-auto bg-white dark:bg-gray-800 pt-2 px-2">
+    <div class="flex-grow">
+      <div id="requests-group" class="h-full" phx-hook="ToogleDeleteAllButton">
+        <ul id="requests" phx-update="stream" class="h-full font-medium">
+          <.aside_item :for={{dom_id, req} <- @requests} id={dom_id} req={req} current={@current} />
+        </ul>
+        <div id="delete-all-btn" class="opacity-0 text-center absolute pb-2 left-0 right-0 bottom-0 bg-white">
+          <button
+            type="button"
+            class="btn-delete-all"
+            phx-click="delete_all"
+            data-confirm="Are you sure?"
+          >
+            Delete All
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</aside>
