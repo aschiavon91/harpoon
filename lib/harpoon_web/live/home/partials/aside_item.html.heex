@@ -14,7 +14,7 @@ span_classes =
     "OPTIONS" -> "bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-300"
   end %>
 
-<li id={@id}>
+<li id={@id} class="last-of-type:mb-24">
   <ul class={"grid grid-rows grid-flow-col gap-1 rounded px-2 py-1 #{link_classes}"}>
     <.link class="row-span-2 col-span-2" patch={~p"/?sid=#{@req.sid}&rid=#{@req.id}"}>
       <div>

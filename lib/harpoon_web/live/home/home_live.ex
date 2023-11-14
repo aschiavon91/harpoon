@@ -23,7 +23,20 @@ defmodule HarpoonWeb.HomeLive do
   @impl true
   def handle_params(%{"sid" => sid} = params, _uri, socket) do
     requests = Requests.list_by_sid(sid)
-    {:noreply, initial_assigns(socket, requests, sid, params["rid"])}
+    rid = params["rid"]
+    current = get_current_request(requests, rid)
+    new_rid = Map.get(current || %{}, :id)
+
+    socket =
+      socket
+      |> stream(:requests, requests)
+      |> assign(:sid, sid)
+      |> assign(:rid, new_rid)
+      |> assign(:current, current)
+      |> assign(page_title: "[Harpoon] SID: #{sid}")
+      |> then(&if(is_nil(rid) && new_rid, do: push_patch(&1, to: ~p"/?sid=#{sid}&rid=#{new_rid}"), else: &1))
+
+    {:noreply, socket}
   end
 
   @impl true
@@ -33,19 +46,19 @@ defmodule HarpoonWeb.HomeLive do
     socket =
       socket
       |> assign(:sid, sid)
-      |> redirect(to: ~p"/?sid=#{sid}")
+      |> push_navigate(to: ~p"/?sid=#{sid}")
       |> assign(page_title: "[Harpoon] SID: #{sid}")
 
     {:noreply, socket}
   end
 
   @impl true
-  def handle_event("delete", %{"id" => <<"requests-" <> id>> = dom_id}, socket) do
+  def handle_event("delete", %{"id" => <<"requests-" <> id>>}, socket) do
     sid = socket.assigns[:sid]
 
     case Requests.delete(%Request{id: id, sid: sid}) do
       {:ok, _} ->
-        after_delete_assigns(socket, dom_id)
+        {:noreply, socket}
 
       error ->
         Logger.error("delete error #{inspect(error)}")
@@ -58,43 +71,34 @@ defmodule HarpoonWeb.HomeLive do
     sid = socket.assigns[:sid]
 
     case Requests.delete_all_by_sid(sid) do
-      {:ok, _deleted} ->
-        {:noreply, socket}
-
-      {:error, _} ->
-        {:noreply, put_flash(socket, :error, "error deleting all requests")}
+      {:ok, _deleted} -> {:noreply, socket}
+      {:error, _} -> {:noreply, put_flash(socket, :error, "error deleting all requests")}
     end
   end
 
   @impl true
   def handle_info({:created, req}, socket) do
     current = socket.assigns[:current] || req
-    sid = socket.assigns[:sid]
 
     socket =
       socket
       |> stream_insert(:requests, req, at: 0)
       |> assign(:current, current)
-      |> push_navigate(to: ~p"/?sid=#{sid}&rid=#{current.id}")
       |> put_flash(:info, "Ahoy! A new request was hooked!")
 
     {:noreply, socket}
   end
 
   @impl true
-  def handle_info({:deleted, req}, socket) do
-    id = req.id
-    dom_id = "requests-#{req.id}"
-    sid = socket.assigns[:sid]
+  def handle_info({:deleted, %{id: id}}, socket) do
+    dom_id = "requests-#{id}"
 
     socket
     |> stream_delete_by_dom_id(:requests, dom_id)
     |> put_flash(:info, "#{id} deleted!")
     |> then(fn
       %{assigns: %{current: %{id: ^id}}} = socket ->
-        socket
-        |> assign(:current, nil)
-        |> push_patch(to: ~p"/?sid=#{sid}")
+        assign(socket, :current, nil)
 
       socket ->
         socket
@@ -110,41 +114,10 @@ defmodule HarpoonWeb.HomeLive do
       socket
       |> stream(:requests, [], reset: true)
       |> assign(:current, nil)
-      |> push_navigate(to: ~p"/?sid=#{sid}")
+      |> push_patch(to: ~p"/?sid=#{sid}")
       |> then(&if deleted > 0, do: put_flash(&1, :info, "all requests deleted!"), else: &1)
 
     {:noreply, socket}
-  end
-
-  defp initial_assigns(socket, requests, sid, rid) do
-    current = get_current_request(requests, rid)
-    new_rid = Map.get(current || %{}, :id)
-
-    socket
-    |> stream(:requests, requests)
-    |> assign(:sid, sid)
-    |> assign(:rid, new_rid)
-    |> assign(:current, current)
-    |> assign(page_title: "[Harpoon] SID: #{sid}")
-    |> then(&if(is_nil(rid) && new_rid, do: push_navigate(&1, to: ~p"/?sid=#{sid}&rid=#{new_rid}"), else: &1))
-  end
-
-  defp after_delete_assigns(socket, <<"requests-" <> id>> = dom_id) do
-    sid = socket.assigns[:sid]
-
-    socket
-    |> stream_delete_by_dom_id(:requests, dom_id)
-    |> put_flash(:info, "#{id} deleted!")
-    |> then(fn
-      %{assigns: %{current: %{id: ^id}}} = socket ->
-        socket
-        |> assign(:current, nil)
-        |> push_patch(to: ~p"/?sid=#{sid}")
-
-      socket ->
-        socket
-    end)
-    |> then(&{:noreply, &1})
   end
 
   defp get_current_request(requests, nil) do
