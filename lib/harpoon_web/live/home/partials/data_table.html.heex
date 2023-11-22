@@ -1,6 +1,6 @@
 <div class="col-span-auto">
   <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+    <table id={@id} class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
       <caption class="p-5 text-lg font-semibold text-left text-gray-900 bg-white dark:text-white dark:bg-gray-800">
         <%= @collection_name %>
       </caption>
@@ -23,10 +23,10 @@
             scope="row"
             class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
           >
-            <code><%= data_field_name %></code>
+            <code class="data-key-name"><%= data_field_name %></code>
           </th>
           <td class="px-6 py-4">
-            <code><%= data_value %></code>
+            <code class="data-value"><%= data_value %></code>
           </td>
         </tr>
       </tbody>

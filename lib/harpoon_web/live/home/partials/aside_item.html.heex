@@ -4,7 +4,7 @@
     else: "text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
 
 span_classes =
-  case @req.method do
+  case String.upcase(@req.method) do
     "GET" -> "bg-green-300 text-green-800 dark:bg-green-900 dark:text-green-300"
     "HEAD" -> "bg-lime-100 text-lime-800 dark:bg-lime-900 dark:text-lime-300"
     "POST" -> "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300"
