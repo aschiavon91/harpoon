@@ -62,7 +62,6 @@ asdf install
 ### Dev setup
 
 ```bash
-docker compose -f docker-compose-dev.yaml up -d
 mix setup
 ```
 
@@ -71,17 +70,16 @@ or using [just](https://github.com/casey/just)
 just start_dev
 ```
 
-### Prod setup
+### Docker setup
 
 Change the value of 'SECRET_KEY_BASE' env in the .prod.env file, you can run `mix phx.gen.secret 64` to generated a secret for you.
 
 ```bash
-docker compose -f docker-compose.yaml up -d
+docker build -t harpoon . && docker run --env-file=.prod.env -it harpoon
 ```
 
 or using [just](https://github.com/casey/just)
-
-```bash
+```
 just start_prod
 ```
 

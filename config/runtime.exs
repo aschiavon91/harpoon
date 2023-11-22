@@ -21,9 +21,11 @@ if System.get_env("PHX_SERVER") do
 end
 
 if config_env() == :prod do
+  user_home = System.fetch_env!("HOME")
+
   config :harpoon, Harpoon.Repo,
     # ssl: true,
-    database: System.get_env("DATABASE_FILE", "~/.harpoon/harpoon_prod.sqlite"),
+    database: System.get_env("DATABASE_FILE", "#{user_home}/.harpoon/harpoon_prod.sqlite"),
     pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10")
 
   # The secret key base is used to sign/encrypt cookies and other secrets.
