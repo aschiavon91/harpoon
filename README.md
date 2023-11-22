@@ -28,7 +28,7 @@ The tool is intended for testing, debugging, and monitoring webhooks, APIs, and 
 
 - Create temporary endpoints for testing and monitoring HTTP requests.
 - Inspect HTTP requests in real-time using Phoenix LiveView.
-- Store request data in a PostgreSQL database for future analysis and reference.
+- Store request data in a Sqlite database for easy analysis and setup.
 - Lightweight and easy to use.
 
 ## Prerequisites
@@ -40,7 +40,7 @@ The tool is intended for testing, debugging, and monitoring webhooks, APIs, and 
 ### Local Version
 - Elixir
 - Erlang
-- PostgreSQL
+- Sqlite
 
 ## Installation
 

@@ -5,8 +5,10 @@ defmodule Harpoon.Release do
   """
   @app :harpoon
 
-  def migrate do
-    load_app()
+  def migrate(should_load_app \\ true) do
+    if should_load_app do
+      load_app()
+    end
 
     for repo <- repos() do
       {:ok, _, _} = Ecto.Migrator.with_repo(repo, &Ecto.Migrator.run(&1, :up, all: true))
