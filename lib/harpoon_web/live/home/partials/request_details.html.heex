@@ -1,16 +1,32 @@
 <% request_fields =
   ~w(id method path host remote_ip remote_port http_version body_length)a %>
-<.data_table collection_name="Request Details" data={Map.take(@request, request_fields)} />
 <.data_table
-  :if={@request.query_params != %{}}
+  :if={@request}
+  id="request-details-table"
+  collection_name="Request Details"
+  data={Map.take(@request, request_fields)}
+/>
+<.data_table
+  :if={@request.query_params && @request.query_params != %{}}
+  id="query-params-table"
   collection_name="Query Parameters"
   data={@request.query_params}
 />
-<.data_table :if={@request.cookies != %{}} collection_name="Cookies" data={@request.cookies} />
-<.data_table :if={@request.headers != %{}} collection_name="Headers" data={@request.headers} />
+<.data_table
+  :if={@request.cookies && @request.cookies != %{}}
+  id="cookies-table"
+  collection_name="Cookies"
+  data={@request.cookies}
+/>
+<.data_table
+  :if={@request.headers && @request.headers != %{}}
+  id="headers-table"
+  collection_name="Headers"
+  data={@request.headers}
+/>
 <div :if={@request.body} class="col-span-1">
   <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+    <table id="body-table" class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
       <caption class="p-5 text-lg font-semibold text-left text-gray-900 bg-white dark:text-white dark:bg-gray-800">
         Body
       </caption>

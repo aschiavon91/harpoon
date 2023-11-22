@@ -25,7 +25,11 @@ defmodule HarpoonWeb.ConnCase do
       # Import conveniences for testing with connections
       import HarpoonWeb.ConnCase
       import Phoenix.ConnTest
+      import Phoenix.HTML
+      import Phoenix.LiveViewTest
       import Plug.Conn
+
+      alias Phoenix.LiveViewTest.View
 
       @endpoint HarpoonWeb.Endpoint
     end
