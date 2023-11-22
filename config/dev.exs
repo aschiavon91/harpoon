@@ -2,10 +2,7 @@ import Config
 
 # Configure your database
 config :harpoon, Harpoon.Repo,
-  username: "postgres",
-  password: "postgres",
-  hostname: "localhost",
-  database: "harpoon_dev",
+  database: "priv/data/harpoon_dev.sqlite",
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
@@ -77,6 +74,3 @@ config :phoenix, :plug_init_mode, :runtime
 
 # Include HEEx debug annotations as HTML comments in rendered markup
 config :phoenix_live_view, :debug_heex_annotations, true
-
-# Disable swoosh api client as it is only required for production adapters.
-config :swoosh, :api_client, false

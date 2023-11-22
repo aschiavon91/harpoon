@@ -6,20 +6,18 @@ defmodule Harpoon.Application do
   use Application
 
   alias Harpoon.Workers.CapturedRequestsWorker
+  alias Harpoon.Workers.MigrationRunnerWorker
 
   @impl true
   def start(_type, _args) do
     children = [
       HarpoonWeb.Telemetry,
       Harpoon.Repo,
+      MigrationRunnerWorker,
       {DNSCluster, query: Application.get_env(:harpoon, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Harpoon.PubSub},
-      # Start the Finch HTTP client for sending emails
       {Finch, name: Harpoon.Finch},
       CapturedRequestsWorker,
-      # Start a worker by calling: Harpoon.Worker.start_link(arg)
-      # {Harpoon.Worker, arg},
-      # Start to serve requests, typically the last entry
       HarpoonWeb.Endpoint
     ]
 
