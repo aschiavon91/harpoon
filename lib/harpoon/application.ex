@@ -14,7 +14,6 @@ defmodule Harpoon.Application do
       HarpoonWeb.Telemetry,
       Harpoon.Repo,
       MigrationRunnerWorker,
-      {DNSCluster, query: Application.get_env(:harpoon, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Harpoon.PubSub},
       {Finch, name: Harpoon.Finch},
       CapturedRequestsWorker,
