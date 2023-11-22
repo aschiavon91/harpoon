@@ -62,7 +62,6 @@ asdf install
 ### Dev setup
 
 ```bash
-docker compose -f docker-compose-dev.yaml up -d
 mix setup
 ```
 
