@@ -1,9 +1,14 @@
 name: Build Docker
 
 on:
+  push:
+    branches:
+      - "main"
   pull_request:
     branches:
       - "main"
+  release:
+    types: [published]
 
 jobs:
   docker:
@@ -31,6 +36,6 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           file: ./Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
+          push: ${{ github.event_name == 'release' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

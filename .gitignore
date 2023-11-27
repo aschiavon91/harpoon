@@ -4,6 +4,7 @@
 # language server artifacts.
 .elixir_ls
 .lexical
+.elixir-tools
 
 # If you run "mix test --cover", coverage assets end up here.
 /cover/
