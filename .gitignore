@@ -40,3 +40,4 @@ npm-debug.log
 /assets/node_modules/
 
 /priv/data
+/priv/plts

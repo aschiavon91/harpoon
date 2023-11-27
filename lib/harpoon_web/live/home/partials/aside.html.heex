@@ -5,7 +5,10 @@
         <ul id="requests" phx-update="stream" class="h-full font-medium">
           <.aside_item :for={{dom_id, req} <- @requests} id={dom_id} req={req} current={@current} />
         </ul>
-        <div id="delete-all-btn" class="opacity-0 text-center absolute pb-2 left-0 right-0 bottom-0 bg-white">
+        <div
+          id="delete-all-btn"
+          class="opacity-0 text-center absolute pb-2 left-0 right-0 bottom-0 bg-white"
+        >
           <button
             type="button"
             class="btn-delete-all"
