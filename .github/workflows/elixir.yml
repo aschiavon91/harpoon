@@ -65,3 +65,6 @@ jobs:
 
       - name: Run dialyzer
         run: mix dialyzer --no-check --halt-exit-status
+
+      - name: SAST with sobelow
+        run: mix sobelow --config .sobelow-conf
