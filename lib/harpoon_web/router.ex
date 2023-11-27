@@ -19,6 +19,7 @@ defmodule HarpoonWeb.Router do
 
     live_session :default do
       live "/", HomeLive, :index
+      live "/sessions", SessionsLive, :index
     end
   end
 
