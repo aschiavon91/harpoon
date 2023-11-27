@@ -9,7 +9,9 @@ defmodule Harpoon.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      dialyzer: dialyzer(),
+      releases: releases()
     ]
   end
 
@@ -26,6 +28,25 @@ defmodule Harpoon.MixProject do
   # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
+
+  defp dialyzer do
+    [
+      plt_core_path: "priv/plts",
+      plt_file: {:no_warn, "priv/plts/dialyzer.plt"},
+      plt_add_deps: :app_tree,
+      list_unused_filters: true
+    ]
+  end
+
+  defp releases do
+    [
+      harpoon: [
+        applications: [
+          harpoon: :permanent
+        ]
+      ]
+    ]
+  end
 
   # Specifies your project dependencies.
   #
@@ -49,7 +70,10 @@ defmodule Harpoon.MixProject do
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
-      {:styler, "~> 0.10", only: [:dev, :test], runtime: false}
+      {:styler, "~> 0.10", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
+      {:sobelow, "~> 0.12.2", only: [:dev, :test], runtime: false}
     ]
   end
 
@@ -67,7 +91,8 @@ defmodule Harpoon.MixProject do
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
       "assets.build": ["tailwind default", "esbuild default"],
-      "assets.deploy": ["assets.setup", "tailwind default --minify", "esbuild default --minify", "phx.digest"]
+      "assets.deploy": ["assets.setup", "tailwind default --minify", "esbuild default --minify", "phx.digest"],
+      check: ["format --check-formatted", "credo --strict", "dialyzer", "sobelow --config .sobelow-conf"]
     ]
   end
 end

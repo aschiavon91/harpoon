@@ -1,0 +1,69 @@
+name: Build and Check Elixir
+
+on:
+  pull_request:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+env:
+  MIX_ENV: dev
+  OTP: "26.1.2"
+  ELIXIR: "1.15.7"
+
+jobs:
+  build:
+    name: Build and test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1.16.0
+        with:
+          elixir-version: ${{ env.ELIXIR }}
+          otp-version: ${{ env.OTP }}
+
+      - name: Restore dependencies cache
+        uses: actions/cache@v3
+        id: mix-cache
+        with:
+          path: deps
+          key: ${{ runner.os }}-${{ env.OTP }}-${{ env.ELIXIR }}-mix-${{ hashFiles('**/mix.lock') }}
+          restore-keys: ${{ runner.os }}-${{ env.OTP }}-${{ env.ELIXIR }}-mix-
+
+      - name: Install dependencies
+        if: steps.mix-cache.outputs.cache-hit != 'true'
+        run: |
+          mix deps.get --only dev
+          mix deps.get --only test
+
+      - name: Check format
+        run: mix format --check-formatted
+
+      - name: Run Credo
+        run: mix credo --strict
+
+      - name: Run tests
+        run: MIX_ENV=test mix test
+
+      - name: Retrieve PLT Cache
+        uses: actions/cache@v1
+        id: plt-cache
+        with:
+          path: priv/plts
+          key: ${{ runner.os }}-${{ env.OTP }}-${{ env.ELIXIR }}-plts-${{ hashFiles('**/mix.lock') }}
+          restore-keys: ${{ runner.os }}-${{ env.OTP }}-${{ env.ELIXIR }}-plts-
+
+      - name: Create PLTs
+        if: steps.plt-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p priv/plts
+          mix dialyzer --plt
+
+      - name: Run dialyzer
+        run: mix dialyzer --no-check --halt-exit-status
+
+      - name: SAST with sobelow
+        run: mix sobelow --config .sobelow-conf

@@ -11,7 +11,10 @@ defmodule HarpoonWeb.HomeLive do
 
   @impl true
   def mount(%{"sid" => sid}, _, socket) do
-    if connected?(socket), do: Phoenix.PubSub.subscribe(Harpoon.PubSub, "requests:#{sid}")
+    if connected?(socket) do
+      Phoenix.PubSub.subscribe(Harpoon.PubSub, "requests:#{sid}")
+    end
+
     {:ok, stream_configure(socket, :requests, dom_id: &"requests-#{&1.id}")}
   end
 

@@ -5,18 +5,21 @@ defmodule Harpoon.Release do
   """
   @app :harpoon
 
+  @spec migrate(boolean()) :: :ok | no_return()
   def migrate(should_load_app \\ true) do
     if should_load_app do
-      load_app()
+      _ = load_app()
     end
 
     for repo <- repos() do
       {:ok, _, _} = Ecto.Migrator.with_repo(repo, &Ecto.Migrator.run(&1, :up, all: true))
     end
+
+    :ok
   end
 
   def rollback(repo, version) do
-    load_app()
+    _ = load_app()
     {:ok, _, _} = Ecto.Migrator.with_repo(repo, &Ecto.Migrator.run(&1, :down, to: version))
   end
 
@@ -25,6 +28,6 @@ defmodule Harpoon.Release do
   end
 
   defp load_app do
-    Application.load(@app)
+    :ok = Application.load(@app)
   end
 end

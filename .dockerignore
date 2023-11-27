@@ -31,6 +31,7 @@
 /tmp/
 .elixir_ls
 .lexical
+.elixir-tools
 
 # Mix artifacts
 /_build/
