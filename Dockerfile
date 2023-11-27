@@ -104,7 +104,6 @@ USER nobody
 # ENTRYPOINT ["/tini", "--"]
 
 ENV DATABASE_FILE /app/data/harpoon_prod.sqlite
-ENV PHX_HOST "0.0.0.0"
 ENV PORT 4000
 EXPOSE ${PORT}
 
