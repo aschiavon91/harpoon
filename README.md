@@ -8,7 +8,7 @@ This tool allows users to easily inspect HTTP requests in real-time.
 
 ## just run it
 ```
-docker compose up -d
+docker run -p 4000:4000 aschiavon/harpoon
 ```
 
 ## Table of Contents
