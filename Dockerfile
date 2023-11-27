@@ -67,11 +67,14 @@ RUN mix compile
 COPY config/runtime.exs config/
 
 COPY rel rel
-RUN mix release
+RUN MIX_ENV=prod mix release
 
 # start a new build stage so that the final image will only contain
 # the compiled release and other runtime necessities
-FROM --platform=$BUILDPLATFORM ${RUNNER_IMAGE}
+
+FROM "arm64v8/debian:${DEBIAN_VERSION}" as runner-arm64
+FROM "debian:${DEBIAN_VERSION}" as runner-amd64
+FROM runner-${TARGETARCH} as runner
 
 RUN apt-get update -y && \
   apt-get install -y libstdc++6 openssl libncurses5 locales ca-certificates \
@@ -101,5 +104,7 @@ USER nobody
 # ENTRYPOINT ["/tini", "--"]
 
 ENV DATABASE_FILE /app/data/harpoon_prod.sqlite
+ENV PORT 4000
+EXPOSE ${PORT}
 
 CMD ["/app/bin/server"]
