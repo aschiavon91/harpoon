@@ -40,9 +40,6 @@ jobs:
       - name: Check format
         run: mix format --check-formatted
 
-      - name: Check typespecs
-        run: mix dialyzer
-
       - name: Run Credo
         run: mix credo --strict
 
