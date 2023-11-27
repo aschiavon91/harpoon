@@ -1,9 +1,6 @@
 name: Build Docker
 
 on:
-  push:
-    branches:
-      - "main"
   release:
     types: [published]
 
