@@ -1,4 +1,4 @@
-name: Build
+name: Build and Check Elixir
 
 on:
   pull_request:
