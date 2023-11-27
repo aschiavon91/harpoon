@@ -39,6 +39,20 @@ jobs:
           mix deps.get --only dev
           mix deps.get --only test
 
+      - name: Restore build cache
+        uses: actions/cache@v3
+        id: build-cache
+        with:
+          path: _build
+          key: ${{ runner.os }}-${{ env.OTP }}-${{ env.ELIXIR }}-build-${{ hashFiles('**/mix.lock') }}
+          restore-keys: ${{ runner.os }}-${{ env.OTP }}-${{ env.ELIXIR }}-build-
+
+      - name: Build dependencies
+        if: steps.build-cache.outputs.cache-hit != 'true'
+        run: |
+          MIX_ENV=dev mix do deps.compile, compile
+          MIX_ENV=test mix do deps.compile, compile
+
       - name: Check format
         run: mix format --check-formatted
 
