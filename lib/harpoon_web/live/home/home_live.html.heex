@@ -1,5 +1,10 @@
-<.aside requests={@streams.requests} sid={@sid} current={@current} />
-<div class="grid grid-cols-1 p-2 pt-8 mt-14 xl:grid-cols-2 xl:gap-2 dark:bg-gray-900">
-  <.request_details :if={@current} request={@current} />
-  <.without_requests url={url(~p"/#{@sid}")} />
-</div>
+<main class="lg:px-0 sm:ml-64">
+  <div class="mx-auto max-w">
+    <.flash_group flash={@flash} />
+    <.aside requests={@streams.requests} sid={@sid} current={@current} />
+    <div class="grid grid-cols-1 p-2 pt-8 mt-14 xl:grid-cols-2 xl:gap-2 dark:bg-gray-900">
+      <.request_details :if={@current} request={@current} />
+      <.without_requests url={url(~p"/#{@sid}")} />
+    </div>
+  </div>
+</main>

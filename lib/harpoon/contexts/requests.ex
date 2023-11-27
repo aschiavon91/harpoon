@@ -42,6 +42,13 @@ defmodule Harpoon.Contexts.Requests do
     end
   end
 
+  def count_grouped_by_sid do
+    Request
+    |> group_by(:sid)
+    |> select([r], %{count: count(r.id), sid: r.sid})
+    |> Repo.all()
+  end
+
   defp broadcast(sid, data) do
     Harpoon.PubSub
     |> PubSub.broadcast("requests:#{sid}", data)
