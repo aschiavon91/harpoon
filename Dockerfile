@@ -29,6 +29,9 @@ RUN apt-get update -y && apt-get install -y build-essential git npm \
 # prepare build dir
 WORKDIR /app
 
+# fix arm build
+ENV ERL_FLAGS="+JMsingle true"
+
 # install hex + rebar
 RUN mix local.hex --force && \
     mix local.rebar --force
