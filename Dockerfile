@@ -15,10 +15,12 @@ ARG ELIXIR_VERSION=1.15.7
 ARG OTP_VERSION=26.1.2
 ARG DEBIAN_VERSION=bullseye-20231009-slim
 
-ARG BUILDER_IMAGE="hexpm/elixir:${ELIXIR_VERSION}-erlang-${OTP_VERSION}-debian-${DEBIAN_VERSION}"
 ARG RUNNER_IMAGE="debian:${DEBIAN_VERSION}"
 
-FROM --platform=$BUILDPLATFORM ${BUILDER_IMAGE} as builder
+FROM "hexpm/elixir-arm64:${ELIXIR_VERSION}-erlang-${OTP_VERSION}-debian-${DEBIAN_VERSION}" as builder-arm64
+FROM "hexpm/elixir:${ELIXIR_VERSION}-erlang-${OTP_VERSION}-debian-${DEBIAN_VERSION}" as builder-amd64
+
+FROM builder-${TARGETARCH} as builder
 
 # install build dependencies
 RUN apt-get update -y && apt-get install -y build-essential git npm \
