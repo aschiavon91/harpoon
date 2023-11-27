@@ -35,7 +35,9 @@ jobs:
 
       - name: Install dependencies
         if: steps.mix-cache.outputs.cache-hit != 'true'
-        run: mix deps.get
+        run: |
+          mix deps.get --only dev
+          mix deps.get --only test
 
       - name: Check format
         run: mix format --check-formatted
