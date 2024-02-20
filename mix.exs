@@ -64,7 +64,7 @@ defmodule Harpoon.MixProject do
       {:floki, ">= 0.30.0", only: :test},
       {:phoenix_live_dashboard, "~> 0.8.2"},
       {:tailwind, "~> 0.2.0", runtime: Mix.env() == :dev},
-      {:finch, "~> 0.13"},
+      {:finch, "~> 0.18"},
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
       {:gettext, "~> 0.20"},
