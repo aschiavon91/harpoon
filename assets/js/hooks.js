@@ -19,6 +19,14 @@ const Hooks = {
     updated() {
       TOGGLE_BTN()
     }
+  },
+  HighlightCode: {
+    // mounted() {
+    //   hljs.highlightElement(this.el)
+    // },
+    // updated() {
+    //   hljs.highlightElement(this.el)
+    // }
   }
 };
 

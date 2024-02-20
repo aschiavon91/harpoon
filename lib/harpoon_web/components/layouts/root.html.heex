@@ -8,10 +8,18 @@
       <%= assigns[:page_title] || "[Harpoon]" %>
     </.live_title>
     <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
+    <script>
+      // On page load or when changing themes, best to add inline in `head` to avoid FOUC
+      if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    </script>
     <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
     </script>
   </head>
   <body>
-    <div class="bg-slate-50 min-h-screen max-h-full"><%= @inner_content %></div>
+    <div class="bg-slate-50 dark:bg-slate-900 min-h-screen max-h-full"><%= @inner_content %></div>
   </body>
 </html>

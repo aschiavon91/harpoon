@@ -1,52 +1,46 @@
 <% request_fields =
-  ~w(id method path host remote_ip remote_port http_version body_length)a %>
+  ~w(method path host remote_ip remote_port http_version body_length)a %>
 <.data_table
   :if={@request}
   id="request-details-table"
   collection_name="Request Details"
   data={Map.take(@request, request_fields)}
+  titlefy={true}
 />
 <.data_table
   :if={@request.query_params && @request.query_params != %{}}
   id="query-params-table"
   collection_name="Query Parameters"
   data={@request.query_params}
-/>
-<.data_table
-  :if={@request.cookies && @request.cookies != %{}}
-  id="cookies-table"
-  collection_name="Cookies"
-  data={@request.cookies}
+  titlefy={false}
 />
 <.data_table
   :if={@request.headers && @request.headers != %{}}
   id="headers-table"
   collection_name="Headers"
   data={@request.headers}
+  titlefy={false}
 />
-<div :if={@request.body} class="col-span-1">
+<.data_table
+  :if={@request.cookies && @request.cookies != %{}}
+  id="cookies-table"
+  collection_name="Cookies"
+  data={@request.cookies}
+  titlefy={false}
+/>
+<div :if={@request.body} class="col-span-2 mt-8 md:mt-2">
   <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-    <table id="body-table" class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-      <caption class="p-5 text-lg font-semibold text-left text-gray-900 bg-white dark:text-white dark:bg-gray-800">
-        Body
-      </caption>
-      <tbody>
-        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-          <th
-            scope="row"
-            class="px-5 pb-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-          >
-            <textarea
-              rows="4"
-              class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              readonly
-              disabled
-            >
-              <%= @request.body %>
-            </textarea>
-          </th>
-        </tr>
-      </tbody>
-    </table>
+    <div class="max-w-full bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+      <div class="px-6 pt-4">
+        <h5 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+          Body
+        </h5>
+        <pre class="language-json" readonly disabled>
+          <code id="request-body" phx-hook="HighlightCode" class="rounded-lg border border-gray-300 dark:border-gray-600">
+            <%= Jason.Formatter.pretty_print(@request.body) %>
+          </code>
+        </pre>
+      </div>
+    </div>
   </div>
 </div>
