@@ -64,16 +64,16 @@ defmodule Harpoon.MixProject do
       {:floki, ">= 0.30.0", only: :test},
       {:phoenix_live_dashboard, "~> 0.8.2"},
       {:tailwind, "~> 0.2.0", runtime: Mix.env() == :dev},
-      {:finch, "~> 0.13"},
+      {:finch, "~> 0.18"},
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
-      {:gettext, "~> 0.20"},
+      {:gettext, "~> 0.24"},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
-      {:styler, "~> 0.10", only: [:dev, :test], runtime: false},
+      {:styler, "~> 0.11", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
-      {:sobelow, "~> 0.12.2", only: [:dev, :test], runtime: false}
+      {:sobelow, "~> 0.13.0", only: [:dev, :test], runtime: false}
     ]
   end
 
