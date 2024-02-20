@@ -1,6 +1,7 @@
 <% link_classes =
   if @req.id == Map.get(@current || %{}, :id),
-    do: "text-gray-900 bg-gray-200 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700",
+    do:
+      "text-gray-900 bg-gray-200 dark:bg-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700",
     else: "text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
 
 span_classes =
