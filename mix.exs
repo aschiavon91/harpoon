@@ -90,7 +90,12 @@ defmodule Harpoon.MixProject do
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
       "assets.build": ["tailwind default", "esbuild default"],
-      "assets.deploy": ["assets.setup", "tailwind default --minify", "cmd --cd assets node build.js --deploy", "phx.digest"],
+      "assets.deploy": [
+        "assets.setup",
+        "tailwind default --minify",
+        "cmd --cd assets node build.js --deploy",
+        "phx.digest"
+      ],
       check: ["format --check-formatted", "credo --strict", "dialyzer", "sobelow --config .sobelow-conf"]
     ]
   end
