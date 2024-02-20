@@ -93,6 +93,7 @@ defmodule Harpoon.MixProject do
       "assets.build": ["tailwind default"],
       "assets.deploy": [
         "assets.setup",
+        "cmd --cd assets node pre-build.js",
         "tailwind default --minify",
         "cmd --cd assets node build.js --deploy",
         "phx.digest"
