@@ -70,7 +70,7 @@ defmodule Harpoon.MixProject do
       {:gettext, "~> 0.24"},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
-      {:styler, "~> 0.10", only: [:dev, :test], runtime: false},
+      {:styler, "~> 0.11", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:sobelow, "~> 0.13.0", only: [:dev, :test], runtime: false}
