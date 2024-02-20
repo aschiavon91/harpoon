@@ -26,7 +26,7 @@ jobs:
           otp-version: ${{ env.OTP }}
 
       - name: Restore dependencies cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         id: mix-cache
         with:
           path: deps
@@ -40,7 +40,7 @@ jobs:
           mix deps.get --only test
 
       - name: Restore build cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         id: build-cache
         with:
           path: _build
@@ -63,7 +63,7 @@ jobs:
         run: MIX_ENV=test mix test
 
       - name: Retrieve PLT Cache
-        uses: actions/cache@v1
+        uses: actions/cache@v4
         id: plt-cache
         with:
           path: priv/plts
