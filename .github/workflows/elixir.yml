@@ -17,16 +17,16 @@ jobs:
     name: Build and test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up Elixir
-        uses: erlef/setup-beam@v1.16.0
+        uses: erlef/setup-beam@v1.17.3
         with:
           elixir-version: ${{ env.ELIXIR }}
           otp-version: ${{ env.OTP }}
 
       - name: Restore dependencies cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         id: mix-cache
         with:
           path: deps
@@ -40,7 +40,7 @@ jobs:
           mix deps.get --only test
 
       - name: Restore build cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         id: build-cache
         with:
           path: _build
@@ -63,7 +63,7 @@ jobs:
         run: MIX_ENV=test mix test
 
       - name: Retrieve PLT Cache
-        uses: actions/cache@v1
+        uses: actions/cache@v4
         id: plt-cache
         with:
           path: priv/plts
