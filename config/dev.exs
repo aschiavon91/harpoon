@@ -22,6 +22,7 @@ config :harpoon, HarpoonWeb.Endpoint,
   debug_errors: true,
   secret_key_base: "UUB23U6FQrnyVOhZzbgdwtHnXOfO0NLvcoCNdUMCVNGHUeiBPuIFdvVp7LCTpT+c",
   watchers: [
+    node: ["pre-build.js", cd: Path.expand("../assets", __DIR__)],
     node: ["build.js", "--watch", cd: Path.expand("../assets", __DIR__)],
     tailwind: {Tailwind, :install_and_run, [:default, ~w(--watch)]}
   ]
