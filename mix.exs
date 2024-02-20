@@ -73,7 +73,7 @@ defmodule Harpoon.MixProject do
       {:styler, "~> 0.10", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
-      {:sobelow, "~> 0.12.2", only: [:dev, :test], runtime: false}
+      {:sobelow, "~> 0.13.0", only: [:dev, :test], runtime: false}
     ]
   end
 
