@@ -56,8 +56,8 @@ defmodule HarpoonWeb.HomeLiveTest do
       assert view |> element("#headers-table tbody tr .data-value", to_string(value)) |> render()
     end
 
-    assert view |> element("#body-table", "Body") |> render()
-    assert view |> element("#body-table textarea", safe_to_string(html_escape(req1.body))) |> render()
+    assert view |> element("#body-data", "Body") |> render()
+    assert view |> element("#body-data code") |> render()
   end
 
   defp build_ctx do

@@ -11,7 +11,8 @@ defmodule Harpoon.MixProject do
       aliases: aliases(),
       deps: deps(),
       dialyzer: dialyzer(),
-      releases: releases()
+      releases: releases(),
+      compilers: [:leex] ++ Mix.compilers()
     ]
   end
 
