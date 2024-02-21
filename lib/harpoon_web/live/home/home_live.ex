@@ -7,26 +7,48 @@ defmodule HarpoonWeb.HomeLive do
 
   require Logger
 
+  @sid_regex ~r/^[a-z]+-[a-z]+-\d{2}$/
+
   embed_templates("partials/*")
 
   @impl true
-  def mount(%{"sid" => sid}, _, socket) do
-    if connected?(socket) do
-      Phoenix.PubSub.subscribe(Harpoon.PubSub, "requests:#{sid}")
+  def mount(params, _session, socket) do
+    case Map.get(params, "path_info") do
+      [sid] ->
+        {:ok, configure_stream(socket, sid, nil)}
+
+      [sid, rid] ->
+        {:ok, configure_stream(socket, sid, rid)}
+
+      _ ->
+        {:ok, redirect_to_new_session(socket)}
     end
+  end
 
-    {:ok, stream_configure(socket, :requests, dom_id: &"requests-#{&1.id}")}
+  defp configure_stream(socket, sid, rid) do
+    if String.match?(sid, @sid_regex) do
+      if connected?(socket) do
+        Phoenix.PubSub.subscribe(Harpoon.PubSub, "requests:#{sid}")
+      end
+
+      target_url = %URI{socket.host_uri | host: "#{sid}.#{socket.host_uri.host}"}
+
+      socket
+      |> then(&if rid, do: assign(&1, :rid, rid), else: &1)
+      |> assign(:sid, sid)
+      |> assign(:target_url, URI.to_string(target_url))
+      |> stream_configure(:requests, dom_id: &"requests-#{&1.id}")
+    else
+      redirect_to_new_session(socket)
+    end
   end
 
   @impl true
-  def mount(_, _, socket) do
-    {:ok, socket}
-  end
+  def handle_params(%{"path_info" => path_info}, _session, socket) do
+    {sid, path_info} = List.pop_at(path_info, 0)
+    {rid, _} = List.pop_at(path_info, 0)
 
-  @impl true
-  def handle_params(%{"sid" => sid} = params, _uri, socket) do
     requests = Requests.list_by_sid(sid)
-    rid = params["rid"]
     current = get_current_request(requests, rid)
     new_rid = Map.get(current || %{}, :id)
 
@@ -37,20 +59,7 @@ defmodule HarpoonWeb.HomeLive do
       |> assign(:rid, new_rid)
       |> assign(:current, current)
       |> assign(page_title: "[Harpoon] SID: #{sid}")
-      |> then(&if(is_nil(rid) && new_rid, do: push_patch(&1, to: ~p"/?sid=#{sid}&rid=#{new_rid}"), else: &1))
-
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_params(_, _, socket) do
-    sid = Ecto.UUID.generate()
-
-    socket =
-      socket
-      |> assign(:sid, sid)
-      |> push_navigate(to: ~p"/?sid=#{sid}")
-      |> assign(page_title: "[Harpoon] SID: #{sid}")
+      |> then(&if(is_nil(rid) && new_rid, do: push_patch(&1, to: ~p"/#{sid}/#{new_rid}"), else: &1))
 
     {:noreply, socket}
   end
@@ -99,13 +108,10 @@ defmodule HarpoonWeb.HomeLive do
     socket
     |> stream_delete_by_dom_id(:requests, dom_id)
     |> put_flash(:info, "#{id} deleted!")
-    |> then(fn
-      %{assigns: %{current: %{id: ^id}}} = socket ->
-        assign(socket, :current, nil)
-
-      socket ->
-        socket
-    end)
+    |> case do
+      %{assigns: %{current: %{id: ^id}}} = socket -> assign(socket, :current, nil)
+      socket -> socket
+    end
     |> then(&{:noreply, &1})
   end
 
@@ -117,7 +123,7 @@ defmodule HarpoonWeb.HomeLive do
       socket
       |> stream(:requests, [], reset: true)
       |> assign(:current, nil)
-      |> push_patch(to: ~p"/?sid=#{sid}")
+      |> push_patch(to: ~p"/#{sid}")
       |> then(&if deleted > 0, do: put_flash(&1, :info, "all requests deleted!"), else: &1)
 
     {:noreply, socket}
@@ -133,5 +139,21 @@ defmodule HarpoonWeb.HomeLive do
     requests
     |> Kernel.||([])
     |> Enum.find(&(&1.id == rid))
+  end
+
+  defp generate_sid do
+    number =
+      0..99
+      |> Enum.random()
+      |> Integer.to_string()
+      |> String.pad_leading(2, "0")
+
+    friendly_id = FriendlyID.generate(2, separator: "-", transform: &String.downcase/1)
+    friendly_id <> "-" <> number
+  end
+
+  defp redirect_to_new_session(socket) do
+    sid = generate_sid()
+    redirect(socket, to: "/#{sid}")
   end
 end

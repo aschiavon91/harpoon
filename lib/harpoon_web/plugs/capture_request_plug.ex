@@ -6,19 +6,23 @@ defmodule HarpoonWeb.Plugs.CaptureRequestPlug do
 
   require Logger
 
-  def init(opts), do: opts
+  def init(_opts), do: %{root_host: HarpoonWeb.Endpoint.config(:url)[:host]}
 
-  def call(%Plug.Conn{path_info: path_info} = conn, _) do
-    with {:ok, sid} <- Ecto.UUID.cast(List.first(path_info)),
-         {:ok, req, conn} <- conn_to_request(conn, sid) do
-      PubSub.broadcast!(Harpoon.PubSub, "captured_requests", req)
+  def call(%Plug.Conn{host: host} = conn, %{root_host: root_host}) do
+    case extract_subdomain(host, root_host) do
+      subdomain when byte_size(subdomain) > 0 -> handle_subdomain_request(conn, subdomain)
+      _ -> conn
+    end
+  end
 
-      conn
-      |> Plug.Conn.send_resp(200, "")
-      |> Plug.Conn.halt()
-    else
-      :error ->
+  defp handle_subdomain_request(conn, sid) do
+    case conn_to_request(conn, sid) do
+      {:ok, req, conn} ->
+        PubSub.broadcast!(Harpoon.PubSub, "captured_requests", req)
+
         conn
+        |> Plug.Conn.send_resp(200, "")
+        |> Plug.Conn.halt()
 
       {:error, reason} ->
         Logger.error("Error capturing request reason #{inspect(reason)}")
@@ -33,7 +37,7 @@ defmodule HarpoonWeb.Plugs.CaptureRequestPlug do
           Map.merge(
             %{
               sid: sid,
-              path: parse_path(conn.request_path, sid),
+              path: conn.request_path,
               headers: Map.new(conn.req_headers),
               body: body,
               method: conn.method,
@@ -62,12 +66,7 @@ defmodule HarpoonWeb.Plugs.CaptureRequestPlug do
     }
   end
 
-  defp parse_path(path, sid) do
-    path
-    |> String.replace("/#{sid}", "")
-    |> case do
-      "" -> "/"
-      other -> other
-    end
+  defp extract_subdomain(host, root_host) do
+    String.replace(host, ~r/.?#{root_host}/, "")
   end
 end

@@ -22,6 +22,10 @@ config :harpoon, HarpoonWeb.Endpoint,
   pubsub_server: Harpoon.PubSub,
   live_view: [signing_salt: "Rl8aH79d"]
 
+config :nanoid,
+  size: 21,
+  alphabet: "_-0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
 # Configure tailwind (the version is required)
 config :tailwind,
   version: "3.3.5",

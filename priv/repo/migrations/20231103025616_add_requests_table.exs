@@ -3,8 +3,8 @@ defmodule Harpoon.Repo.Migrations.AddRequestsTable do
 
   def change do
     create table("requests", primary_key: false) do
-      add :id, :uuid, primary_key: true
-      add :sid, :uuid, null: false
+      add :id, :string, primary_key: true
+      add :sid, :string, null: false
       add :path, :string, null: false
       add :method, :string, null: false
       add :host, :string, null: false
@@ -19,5 +19,7 @@ defmodule Harpoon.Repo.Migrations.AddRequestsTable do
 
       timestamps(type: :utc_datetime_usec)
     end
+
+    create_if_not_exists index(:requests, [:sid])
   end
 end
