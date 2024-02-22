@@ -4,7 +4,7 @@ defmodule Harpoon.MixProject do
   def project do
     [
       app: :harpoon,
-      version: "1.4.0",
+      version: "1.6.2",
       elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
