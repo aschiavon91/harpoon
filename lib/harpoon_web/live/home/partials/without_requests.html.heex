@@ -7,7 +7,12 @@
       <p class="mb-4 text-lg font-light text-gray-500 dark:text-gray-400">
         You can start making your requests!
       </p>
-      <.link href={@url} target="_blank" class="text-gray-500 dark:text-gray-400">
+      <.link
+        href={@url}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="text-gray-500 dark:text-gray-400"
+      >
         <%= @url %>
       </.link>
     </div>

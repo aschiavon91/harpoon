@@ -18,8 +18,8 @@ defmodule HarpoonWeb.Router do
     pipe_through :browser
 
     live_session :default do
-      live "/", HomeLive, :index
       live "/sessions", SessionsLive, :index
+      live "/*path_info", HomeLive, :index
     end
   end
 

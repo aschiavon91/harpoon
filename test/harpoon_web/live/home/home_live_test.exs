@@ -4,36 +4,36 @@ defmodule HarpoonWeb.HomeLiveTest do
   alias Harpoon.Contexts.Requests
 
   test "should add session id when dont have", %{conn: conn} do
-    assert {:error, {:live_redirect, %{to: <<"/?sid=" <> uuid>>, flash: %{}}}} = live(conn, "/")
-    assert Ecto.UUID.cast!(uuid)
+    assert {:error, {:redirect, %{to: <<"/" <> sid>>, flash: %{}}}} = live(conn, "/")
+    assert sid != ""
   end
 
   test "should render when already wave session id", %{conn: conn} do
-    sid = Ecto.UUID.generate()
-    assert {:ok, %View{}, html} = live(conn, "/?sid=#{sid}")
+    sid = Harpoon.Utils.generate_sid()
+    assert {:ok, %View{}, html} = live(conn, "/#{sid}")
     assert html =~ "Nothing captured yet"
     assert html =~ "You can start making your requests!"
-    assert html =~ "http://localhost:4002/#{sid}"
+    assert html =~ "http://#{sid}.localhost"
   end
 
   test "should redirect to last received request if already have some", %{conn: conn} do
     %{sid: sid, requests: [_req1, req2]} = build_ctx()
-    assert {:error, {:live_redirect, %{to: location, flash: %{}}}} = live(conn, "/?sid=#{sid}")
-    assert location == "/?sid=#{sid}&rid=#{req2.id}"
+    assert {:error, {:live_redirect, %{to: location, flash: %{}}}} = live(conn, "/#{sid}")
+    assert location == "/#{sid}/#{req2.id}"
   end
 
   test "should render all request in aside menu", %{conn: conn} do
     %{sid: sid, requests: [req1 | _] = requests} = build_ctx()
-    assert {:ok, view, _html} = live(conn, "/?sid=#{sid}&rid=#{req1.id}")
+    assert {:ok, view, _html} = live(conn, ~p"/#{sid}/#{req1.id}")
 
     for req <- requests do
-      assert view |> element("aside ul li ul a[href='/?sid=#{sid}&rid=#{req.id}']") |> render()
+      assert view |> element("aside ul li ul a[href='/#{sid}/#{req.id}']") |> render()
     end
   end
 
   test "should render request details data when request is seleted", %{conn: conn} do
     %{sid: sid, requests: [req1 | _]} = build_ctx()
-    assert {:ok, view, _html} = live(conn, "/?sid=#{sid}&rid=#{req1.id}")
+    assert {:ok, view, _html} = live(conn, "/#{sid}/#{req1.id}")
 
     assert view |> element("#request-details-table caption", "Request Details") |> render()
 
@@ -61,7 +61,7 @@ defmodule HarpoonWeb.HomeLiveTest do
   end
 
   defp build_ctx do
-    sid = Ecto.UUID.generate()
+    sid = Harpoon.Utils.generate_sid()
 
     request1_params = %{
       sid: sid,

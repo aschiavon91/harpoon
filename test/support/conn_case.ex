@@ -23,7 +23,7 @@ defmodule HarpoonWeb.ConnCase do
       use HarpoonWeb, :verified_routes
 
       # Import conveniences for testing with connections
-      import HarpoonWeb.ConnCase
+      # import HarpoonWeb.ConnCase
       import Phoenix.ConnTest
       import Phoenix.HTML
       import Phoenix.LiveViewTest
@@ -37,6 +37,9 @@ defmodule HarpoonWeb.ConnCase do
 
   setup tags do
     Harpoon.DataCase.setup_sandbox(tags)
-    {:ok, conn: Phoenix.ConnTest.build_conn()}
+    conn = Phoenix.ConnTest.build_conn()
+    host = HarpoonWeb.Endpoint.config(:url)[:host]
+
+    {:ok, conn: %Plug.Conn{conn | host: host}}
   end
 end

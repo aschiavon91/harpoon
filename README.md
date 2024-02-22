@@ -85,6 +85,6 @@ just start_prod
 
 ## Usage
 
-Browser to `http://localhost:4000/` and you should be redirected to `http://localhost:4000/?sid=?<some_uuid>`.
+Browser to `http://localhost:4000/` and you should be redirected to `http://localhost:4000/<session_id>`.
 
-Then, you can start making HTTP requests to `http://localhost:4000/<some_id>`, and you should start seeing the requests in the dashboard.
+Then, you can start making HTTP requests to `http://<session_id>.localhost:4000/`, and you should start seeing the requests in the dashboard.

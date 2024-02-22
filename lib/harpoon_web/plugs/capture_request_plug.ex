@@ -6,19 +6,28 @@ defmodule HarpoonWeb.Plugs.CaptureRequestPlug do
 
   require Logger
 
-  def init(opts), do: opts
+  def init(_opts), do: %{root_host: HarpoonWeb.Endpoint.config(:url)[:host]}
 
-  def call(%Plug.Conn{path_info: path_info} = conn, _) do
-    with {:ok, sid} <- Ecto.UUID.cast(List.first(path_info)),
-         {:ok, req, conn} <- conn_to_request(conn, sid) do
-      PubSub.broadcast!(Harpoon.PubSub, "captured_requests", req)
+  def call(%Plug.Conn{host: host} = conn, %{root_host: root_host}) do
+    case extract_subdomain(host, root_host) do
+      subdomain when byte_size(subdomain) > 0 ->
+        handle_subdomain_request(conn, subdomain)
 
-      conn
-      |> Plug.Conn.send_resp(200, "")
-      |> Plug.Conn.halt()
-    else
-      :error ->
+      _ ->
         conn
+    end
+  end
+
+  defp handle_subdomain_request(conn, "www"), do: conn
+
+  defp handle_subdomain_request(conn, sid) do
+    case conn_to_request(conn, sid) do
+      {:ok, req, conn} ->
+        PubSub.broadcast!(Harpoon.PubSub, "captured_requests", req)
+
+        conn
+        |> Plug.Conn.send_resp(200, "")
+        |> Plug.Conn.halt()
 
       {:error, reason} ->
         Logger.error("Error capturing request reason #{inspect(reason)}")
@@ -33,7 +42,7 @@ defmodule HarpoonWeb.Plugs.CaptureRequestPlug do
           Map.merge(
             %{
               sid: sid,
-              path: parse_path(conn.request_path, sid),
+              path: conn.request_path,
               headers: Map.new(conn.req_headers),
               body: body,
               method: conn.method,
@@ -51,9 +60,7 @@ defmodule HarpoonWeb.Plugs.CaptureRequestPlug do
     end
   end
 
-  defp parse_from_adapter_data(
-         {Plug.Cowboy.Conn, %{version: version, peer: {peer_ip, peer_port}, body_length: body_length}}
-       ) do
+  defp parse_from_adapter_data({_, %{version: version, peer: {peer_ip, peer_port}, body_length: body_length}}) do
     %{
       remote_ip: to_string(:inet_parse.ntoa(peer_ip)),
       remote_port: to_string(peer_port),
@@ -62,12 +69,22 @@ defmodule HarpoonWeb.Plugs.CaptureRequestPlug do
     }
   end
 
-  defp parse_path(path, sid) do
-    path
-    |> String.replace("/#{sid}", "")
-    |> case do
-      "" -> "/"
-      other -> other
-    end
+  defp parse_from_adapter_data({_, %{http_protocol: http_protocol, peer_data: %{port: peer_port, address: peer_ip}}}) do
+    version =
+      http_protocol
+      |> to_string()
+      |> String.split("/")
+      |> List.last()
+
+    %{
+      remote_ip: to_string(:inet_parse.ntoa(peer_ip)),
+      remote_port: to_string(peer_port),
+      body_length: 0,
+      http_version: version
+    }
+  end
+
+  defp extract_subdomain(host, root_host) do
+    String.replace(host, ~r/.?#{root_host}/, "")
   end
 end

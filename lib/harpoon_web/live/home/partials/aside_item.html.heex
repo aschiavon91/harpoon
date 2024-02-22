@@ -17,7 +17,7 @@ span_classes =
 
 <li id={@id} class="last-of-type:mb-24">
   <ul class={"grid grid-rows grid-flow-col gap-1 rounded px-2 py-1 #{link_classes}"}>
-    <.link class="row-span-2 col-span-2" patch={~p"/?sid=#{@req.sid}&rid=#{@req.id}"}>
+    <.link class="row-span-2 col-span-2" patch={~p"/#{@req.sid}/#{@req.id}"}>
       <div>
         <span class={"flex-0 whitespace-nowrap text-center text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full #{span_classes}"}>
           <%= @req.method %>
