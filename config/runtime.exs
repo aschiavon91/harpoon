@@ -35,13 +35,14 @@ if config_env() == :prod do
     ],
     secret_key_base: secret_key_base
 
-  cors_hosts = Enum.map(
-    [
-      %URI{host: host, scheme: scheme},
-      %URI{host: "*.#{host}", scheme: scheme}
-    ],
-    &URI.to_string/1
-  )
+  cors_hosts =
+    Enum.map(
+      [
+        %URI{host: host, scheme: scheme},
+        %URI{host: "*.#{host}", scheme: scheme}
+      ],
+      &URI.to_string/1
+    )
 
   config :cors_plug,
     origin: if(check_origin, do: cors_hosts, else: ["*"]),
