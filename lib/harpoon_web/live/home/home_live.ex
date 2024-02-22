@@ -7,7 +7,7 @@ defmodule HarpoonWeb.HomeLive do
 
   require Logger
 
-  @sid_regex ~r/^[a-z]+-[a-z]+-\d{2}$/
+  @sid_regex ~r/([a-z]+-)([a-z]+-)\d{2}/
 
   embed_templates("partials/*")
 

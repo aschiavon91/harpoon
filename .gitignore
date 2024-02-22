@@ -44,3 +44,5 @@ npm-debug.log
 /priv/data
 /priv/plts
 /priv/static
+
+.env*

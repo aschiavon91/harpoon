@@ -4,6 +4,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    env_file: .prod.env
+    env_file: .env.local
     ports:
       - 4000:4000
