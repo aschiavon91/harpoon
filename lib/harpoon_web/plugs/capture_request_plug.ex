@@ -6,9 +6,11 @@ defmodule HarpoonWeb.Plugs.CaptureRequestPlug do
 
   require Logger
 
-  def init(_opts), do: %{root_host: fetch_config!(:url)[:host]}
+  def init(_opts), do: []
 
-  def call(%Plug.Conn{host: host} = conn, %{root_host: root_host}) do
+  def call(%Plug.Conn{host: host} = conn, _) do
+    root_host = fetch_config!(:url)[:host]
+
     case extract_subdomain(host, root_host) do
       subdomain when byte_size(subdomain) > 0 ->
         handle_subdomain_request(conn, subdomain)
