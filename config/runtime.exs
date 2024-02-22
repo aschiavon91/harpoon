@@ -14,37 +14,23 @@ if config_env() == :prod do
   port = String.to_integer(System.get_env("PORT", "4000"))
   scheme = "http"
 
-  check_origin = host !== "localhost" && host !== "0.0.0.0" && host !== "127.0.0.1"
-
-  origin_hosts =
-    Enum.map(
-      [
-        %URI{host: host, scheme: scheme, port: port},
-        %URI{host: "*.#{host}", scheme: scheme, port: port}
-      ],
-      &URI.to_string/1
-    )
+  valid_origins =
+    "PHX_VALID_ORIGINS"
+    |> System.get_env("*")
+    |> String.replace(~s/\"/, ~s//)
+    |> String.split(",")
 
   config :harpoon, HarpoonWeb.Endpoint,
     url: [host: host || "0.0.0.0", port: port, scheme: scheme],
     server: System.get_env("PHX_SERVER", "true") == "true",
-    check_origin: if(check_origin, do: origin_hosts, else: false),
+    check_origin: if(valid_origins == ["*"], do: false, else: valid_origins),
     http: [
       ip: {0, 0, 0, 0, 0, 0, 0, 0},
       port: port
     ],
     secret_key_base: secret_key_base
 
-  cors_hosts =
-    Enum.map(
-      [
-        %URI{host: host, scheme: scheme},
-        %URI{host: "*.#{host}", scheme: scheme}
-      ],
-      &URI.to_string/1
-    )
-
   config :cors_plug,
-    origin: if(check_origin, do: cors_hosts, else: ["*"]),
+    origin: valid_origins,
     max_age: 86_400
 end
