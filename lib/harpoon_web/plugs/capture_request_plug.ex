@@ -6,7 +6,7 @@ defmodule HarpoonWeb.Plugs.CaptureRequestPlug do
 
   require Logger
 
-  def init(_opts), do: %{root_host: HarpoonWeb.Endpoint.config(:url)[:host]}
+  def init(_opts), do: %{root_host: fetch_config!(:url)[:host]}
 
   def call(%Plug.Conn{host: host} = conn, %{root_host: root_host}) do
     case extract_subdomain(host, root_host) do
@@ -86,5 +86,11 @@ defmodule HarpoonWeb.Plugs.CaptureRequestPlug do
 
   defp extract_subdomain(host, root_host) do
     String.replace(host, ~r/.?#{root_host}/, "")
+  end
+
+  defp fetch_config!(cfg_name) do
+    :harpoon
+    |> Application.fetch_env!(HarpoonWeb.Endpoint)
+    |> Keyword.fetch!(cfg_name)
   end
 end
