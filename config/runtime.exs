@@ -15,6 +15,7 @@ if config_env() == :prod do
   scheme = "http"
 
   check_origin = host !== "localhost" && host !== "0.0.0.0" && host !== "127.0.0.1"
+
   cors_hosts =
     Enum.map(
       [
