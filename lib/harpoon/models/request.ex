@@ -53,6 +53,6 @@ defmodule Harpoon.Models.Request do
     |> cast(params, @fields)
     |> validate_required(@required_fields)
     |> put_change(:id, Nanoid.generate())
-    |> validate_format(:sid, ~r/^[a-z]+-[a-z]+-\d{2}$/)
+    |> validate_format(:sid, ~r/([a-z]+-)([a-z]+-)\d{2}/)
   end
 end

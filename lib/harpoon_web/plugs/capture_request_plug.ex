@@ -9,7 +9,8 @@ defmodule HarpoonWeb.Plugs.CaptureRequestPlug do
   def init(_opts), do: []
 
   def call(%Plug.Conn{host: host} = conn, _) do
-    root_host = fetch_config!(:url)[:host]
+    endpoint_config = fetch_config!(:url)
+    root_host = endpoint_config[:host]
 
     case extract_subdomain(host, root_host) do
       subdomain when byte_size(subdomain) > 0 ->
@@ -20,20 +21,23 @@ defmodule HarpoonWeb.Plugs.CaptureRequestPlug do
     end
   end
 
-  defp handle_subdomain_request(conn, "www"), do: conn
-
   defp handle_subdomain_request(conn, sid) do
-    case conn_to_request(conn, sid) do
-      {:ok, req, conn} ->
-        PubSub.broadcast!(Harpoon.PubSub, "captured_requests", req)
+    with true <- String.match?(sid, ~r/([a-z]+-)([a-z]+-)\d{2}/),
+         {:ok, req, conn} <- conn_to_request(conn, sid) do
+      PubSub.broadcast!(Harpoon.PubSub, "captured_requests", req)
 
-        conn
-        |> Plug.Conn.send_resp(200, "")
-        |> Plug.Conn.halt()
-
+      conn
+      |> Plug.Conn.send_resp(200, "")
+      |> Plug.Conn.halt()
+    else
       {:error, reason} ->
         Logger.error("Error capturing request reason #{inspect(reason)}")
         conn
+
+      false ->
+        conn
+        |> Plug.Conn.send_resp(500, "Internal Server Error")
+        |> Plug.Conn.halt()
     end
   end
 
