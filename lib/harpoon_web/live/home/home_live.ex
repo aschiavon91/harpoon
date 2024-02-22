@@ -141,19 +141,8 @@ defmodule HarpoonWeb.HomeLive do
     |> Enum.find(&(&1.id == rid))
   end
 
-  defp generate_sid do
-    number =
-      0..99
-      |> Enum.random()
-      |> Integer.to_string()
-      |> String.pad_leading(2, "0")
-
-    friendly_id = FriendlyID.generate(2, separator: "-", transform: &String.downcase/1)
-    friendly_id <> "-" <> number
-  end
-
   defp redirect_to_new_session(socket) do
-    sid = generate_sid()
+    sid = Harpoon.Utils.generate_sid()
     redirect(socket, to: "/#{sid}")
   end
 end
