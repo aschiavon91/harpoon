@@ -66,27 +66,16 @@ defmodule HarpoonWeb.Plugs.CaptureRequestPlug do
     end
   end
 
-  defp parse_from_adapter_data({_, %{version: version, peer: {peer_ip, peer_port}, body_length: body_length}}) do
-    %{
-      remote_ip: to_string(:inet_parse.ntoa(peer_ip)),
-      remote_port: to_string(peer_port),
-      body_length: body_length,
-      http_version: to_string(version)
-    }
-  end
-
-  defp parse_from_adapter_data({_, %{http_protocol: http_protocol, peer_data: %{port: peer_port, address: peer_ip}}}) do
-    version =
-      http_protocol
-      |> to_string()
-      |> String.split("/")
-      |> List.last()
+  # bandit
+  defp parse_from_adapter_data({_, %{transport: transport, metrics: metrics}}) do
+    remote_ip = transport.socket.span.start_metadata.remote_address || {127, 0, 0, 1}
+    remote_port = transport.socket.span.start_metadata.remote_port || 0
 
     %{
-      remote_ip: to_string(:inet_parse.ntoa(peer_ip)),
-      remote_port: to_string(peer_port),
-      body_length: 0,
-      http_version: version
+      remote_ip: to_string(:inet_parse.ntoa(remote_ip)),
+      remote_port: to_string(remote_port),
+      body_length: metrics.req_body_bytes || 0,
+      http_version: to_string(transport.version)
     }
   end
 
