@@ -60,9 +60,6 @@ config :harpoon, HarpoonWeb.Endpoint,
     ]
   ]
 
-# Enable dev routes for dashboard and mailbox
-config :harpoon, dev_routes: true
-
 # Do not include metadata nor timestamps in development logs
 config :logger, :console, format: "[$level] $message\n"
 
