@@ -11,16 +11,16 @@
 #   - https://pkgs.org/ - resource for finding needed packages
 #   - Ex: hexpm/elixir:1.15.7-erlang-26.1.2-debian-bullseye-20231009-slim
 #
-ARG ELIXIR_VERSION=1.16.2
-ARG OTP_VERSION=26.2.5
-ARG DEBIAN_VERSION=bookworm-20240513
+ARG ELIXIR_VERSION=1.17.1
+ARG OTP_VERSION=27.0
+ARG DEBIAN_VERSION=bookworm-20240701
 
 ARG RUNNER_IMAGE="debian:${DEBIAN_VERSION}"
 
-FROM "hexpm/elixir-arm64:${ELIXIR_VERSION}-erlang-${OTP_VERSION}-debian-${DEBIAN_VERSION}" as builder-arm64
-FROM "hexpm/elixir:${ELIXIR_VERSION}-erlang-${OTP_VERSION}-debian-${DEBIAN_VERSION}" as builder-amd64
+FROM "hexpm/elixir-arm64:${ELIXIR_VERSION}-erlang-${OTP_VERSION}-debian-${DEBIAN_VERSION}" AS builder-arm64
+FROM "hexpm/elixir:${ELIXIR_VERSION}-erlang-${OTP_VERSION}-debian-${DEBIAN_VERSION}" AS builder-amd64
 
-FROM builder-${TARGETARCH} as builder
+FROM builder-${TARGETARCH} AS builder
 
 # install build dependencies
 RUN apt-get update -y && apt-get install -y build-essential git npm \
@@ -72,20 +72,20 @@ RUN MIX_ENV=prod mix release
 # start a new build stage so that the final image will only contain
 # the compiled release and other runtime necessities
 
-FROM "arm64v8/debian:${DEBIAN_VERSION}" as runner-arm64
-FROM "debian:${DEBIAN_VERSION}" as runner-amd64
-FROM runner-${TARGETARCH} as runner
+FROM "arm64v8/debian:${DEBIAN_VERSION}" AS runner-arm64
+FROM "debian:${DEBIAN_VERSION}" AS runner-amd64
+FROM runner-${TARGETARCH} AS runner
 
 RUN apt-get update -y && \
-  apt-get install -y libstdc++6 openssl libncurses5 locales ca-certificates \
-  && apt-get clean && rm -f /var/lib/apt/lists/*_*
+    apt-get install -y libstdc++6 openssl libncurses5 locales ca-certificates \
+    && apt-get clean && rm -f /var/lib/apt/lists/*_*
 
 # Set the locale
 RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
 
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US:en
-ENV LC_ALL en_US.UTF-8
+ENV LANG="en_US.UTF-8"
+ENV LANGUAGE="en_US:en"
+ENV LC_ALL="en_US.UTF-8"
 
 WORKDIR "/app"
 RUN chown nobody /app
@@ -99,12 +99,12 @@ COPY --from=builder --chown=nobody:root /app/_build/${MIX_ENV}/rel/harpoon ./
 USER nobody
 
 # If using an environment that doesn't automatically reap zombie processes, it is
-# advised to add an init process such as tini via `apt-get install`
+# advised to add an init process such AS tini via `apt-get install`
 # above and adding an entrypoint. See https://github.com/krallin/tini for details
 # ENTRYPOINT ["/tini", "--"]
 
-ENV DATABASE_FILE /app/data/harpoon_prod.sqlite
-ENV PORT 4000
+ENV DATABASE_FILE="/app/data/harpoon_prod.sqlite"
+ENV PORT="4000"
 EXPOSE ${PORT}
 
 CMD ["/app/bin/server"]
