@@ -14,7 +14,7 @@ config :harpoon,
 # Configures the endpoint
 config :harpoon, HarpoonWeb.Endpoint,
   url: [host: "localhost"],
-  adapter: Phoenix.Endpoint.Cowboy2Adapter,
+  adapter: Bandit.PhoenixAdapter,
   render_errors: [
     formats: [html: HarpoonWeb.ErrorHTML, json: HarpoonWeb.ErrorJSON],
     layout: false

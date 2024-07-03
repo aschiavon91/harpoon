@@ -15,7 +15,6 @@ defmodule Harpoon.Application do
       Harpoon.Repo,
       MigrationRunnerWorker,
       {Phoenix.PubSub, name: Harpoon.PubSub},
-      {Finch, name: Harpoon.Finch},
       CapturedRequestsWorker,
       HarpoonWeb.Endpoint
     ]
