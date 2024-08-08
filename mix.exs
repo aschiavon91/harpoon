@@ -72,7 +72,7 @@ defmodule Harpoon.MixProject do
       {:friendlyid, "~> 0.2.0"},
       {:nanoid, "~> 2.1"},
       {:cors_plug, "~> 3.0"},
-      {:styler, "~> 0.11", only: [:dev, :test], runtime: false},
+      {:styler, "~> 1.0", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:sobelow, "~> 0.13.0", only: [:dev, :test], runtime: false}
