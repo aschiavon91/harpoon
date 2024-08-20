@@ -66,7 +66,7 @@ defmodule Harpoon.MixProject do
       {:tailwind, "~> 0.2.0", runtime: Mix.env() == :dev},
       {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.0"},
-      {:gettext, "~> 0.24"},
+      {:gettext, "~> 0.26"},
       {:jason, "~> 1.4"},
       {:bandit, "~> 1.5"},
       {:friendlyid, "~> 0.2.0"},
