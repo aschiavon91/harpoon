@@ -12,7 +12,8 @@ defmodule Harpoon.MixProject do
       deps: deps(),
       dialyzer: dialyzer(),
       releases: releases(),
-      compilers: [:leex] ++ Mix.compilers()
+      compilers: [:leex] ++ Mix.compilers(),
+      default_release: :harpoon
     ]
   end
 
@@ -42,6 +43,14 @@ defmodule Harpoon.MixProject do
   defp releases do
     [
       harpoon: [
+        applications: [
+          harpoon: :permanent
+        ]
+      ],
+      native: [
+        applications: [
+          harpoon: :permanent
+        ],
         steps: [:assemble, &Burrito.wrap/1],
         burrito: [
           targets: [
@@ -49,9 +58,6 @@ defmodule Harpoon.MixProject do
             linux: [os: :linux, cpu: :x86_64],
             windows: [os: :windows, cpu: :x86_64]
           ]
-        ],
-        applications: [
-          harpoon: :permanent
         ]
       ]
     ]
