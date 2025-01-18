@@ -46,3 +46,6 @@ npm-debug.log
 /priv/static
 
 .env*
+
+# Ignore burrito files
+burrito_out/

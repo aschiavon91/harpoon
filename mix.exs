@@ -42,6 +42,14 @@ defmodule Harpoon.MixProject do
   defp releases do
     [
       harpoon: [
+        steps: [:assemble, &Burrito.wrap/1],
+        burrito: [
+          targets: [
+            macos: [os: :darwin, cpu: :x86_64],
+            linux: [os: :linux, cpu: :x86_64],
+            windows: [os: :windows, cpu: :x86_64]
+          ]
+        ],
         applications: [
           harpoon: :permanent
         ]
@@ -54,28 +62,29 @@ defmodule Harpoon.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.7.9"},
+      {:phoenix, "~> 1.7"},
       {:phoenix_ecto, "~> 4.4"},
       {:ecto_sql, "~> 3.10"},
-      {:ecto_sqlite3, "~> 0.16.0"},
+      {:ecto_sqlite3, "~> 0.18"},
       {:phoenix_html, "~> 4.0"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:phoenix_live_view, "~> 0.20.1"},
-      {:floki, ">= 0.30.0", only: :test},
-      {:phoenix_live_dashboard, "~> 0.8.2"},
-      {:tailwind, "~> 0.2.0", runtime: Mix.env() == :dev},
+      {:phoenix_live_view, "~> 1.0"},
+      {:floki, "~> 0.30", only: :test},
+      {:phoenix_live_dashboard, "~> 0.8"},
+      {:tailwind, "~> 0.2", runtime: Mix.env() == :dev},
       {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.0"},
       {:gettext, "~> 0.24"},
       {:jason, "~> 1.4"},
-      {:bandit, "~> 1.5"},
-      {:friendlyid, "~> 0.2.0"},
+      {:bandit, "~> 1.6"},
+      {:friendlyid, "~> 0.2"},
       {:nanoid, "~> 2.1"},
       {:cors_plug, "~> 3.0"},
-      {:styler, "~> 0.11", only: [:dev, :test], runtime: false},
+      {:burrito, "~> 1.2"},
+      {:styler, "~> 1.3", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
-      {:sobelow, "~> 0.13.0", only: [:dev, :test], runtime: false}
+      {:sobelow, "~> 0.13", only: [:dev, :test], runtime: false}
     ]
   end
 
