@@ -20,7 +20,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Set up Elixir
-        uses: erlef/setup-beam@v1.18.0
+        uses: erlef/setup-beam@v1.18
         with:
           elixir-version: ${{ env.ELIXIR }}
           otp-version: ${{ env.OTP }}

@@ -1,3 +1,4 @@
 elixir 1.18.1-otp-27
 erlang 27.2
-just   1.29.1
+just   1.38.0
+nodejs 23.6.0
