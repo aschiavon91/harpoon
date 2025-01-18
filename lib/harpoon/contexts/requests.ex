@@ -1,9 +1,9 @@
-defmodule Harpoon.Contexts.Requests do
+defmodule Harpoon.Requests do
   @moduledoc false
   import Ecto.Query
 
-  alias Harpoon.Models.Request
   alias Harpoon.Repo
+  alias Harpoon.Requests.Request
   alias Phoenix.PubSub
 
   def list_by_sid(sid) do
@@ -19,6 +19,16 @@ defmodule Harpoon.Contexts.Requests do
     |> Repo.insert()
     |> case do
       {:ok, req} -> broadcast(req.sid, {:created, req})
+      err -> err
+    end
+  end
+
+  def delete_by_sid_and_id(sid, req_id) do
+    Request
+    |> where([r], r.id == ^req_id and r.sid == ^sid)
+    |> Repo.delete_all()
+    |> case do
+      {_, _} -> broadcast(sid, {:deleted, req_id})
       err -> err
     end
   end

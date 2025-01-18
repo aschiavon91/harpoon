@@ -20,12 +20,12 @@ span_classes =
     <.link class="row-span-2 col-span-2" patch={~p"/#{@req.sid}/#{@req.id}"}>
       <div>
         <span class={"flex-0 whitespace-nowrap text-center text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full #{span_classes}"}>
-          <%= @req.method %>
+          {@req.method}
         </span>
-        <span class="flex-0 whitespace-nowrap text-md"><%= @req.path %></span>
+        <span class="flex-0 whitespace-nowrap text-md">{@req.path}</span>
       </div>
       <div>
-        <span class="text-xs"><%= DateTime.truncate(@req.inserted_at, :second) %></span>
+        <span class="text-xs">{DateTime.truncate(@req.inserted_at, :second)}</span>
       </div>
     </.link>
 

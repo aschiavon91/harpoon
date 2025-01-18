@@ -7,10 +7,6 @@
 # General application configuration
 import Config
 
-config :harpoon,
-  ecto_repos: [Harpoon.Repo],
-  generators: [timestamp_type: :utc_datetime]
-
 # Configures the endpoint
 config :harpoon, HarpoonWeb.Endpoint,
   url: [host: "localhost"],
@@ -22,9 +18,21 @@ config :harpoon, HarpoonWeb.Endpoint,
   pubsub_server: Harpoon.PubSub,
   live_view: [signing_salt: "Rl8aH79d"]
 
+config :harpoon,
+  ecto_repos: [Harpoon.Repo],
+  generators: [timestamp_type: :utc_datetime]
+
+# Configures Elixir's Logger
+config :logger, :console,
+  format: "$time $metadata[$level] $message\n",
+  metadata: [:request_id]
+
 config :nanoid,
   size: 21,
-  alphabet: "_-0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+  alphabet: "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+# Use Jason for JSON parsing in Phoenix
+config :phoenix, :json_library, Jason
 
 # Configure tailwind (the version is required)
 config :tailwind,
@@ -35,17 +43,9 @@ config :tailwind,
       --input=css/app.css
       --output=../priv/static/assets/app.css
     ),
+    # Import environment specific config. This must remain at the bottom
+    # of this file so it overrides the configuration defined above.
     cd: Path.expand("../assets", __DIR__)
   ]
 
-# Configures Elixir's Logger
-config :logger, :console,
-  format: "$time $metadata[$level] $message\n",
-  metadata: [:request_id]
-
-# Use Jason for JSON parsing in Phoenix
-config :phoenix, :json_library, Jason
-
-# Import environment specific config. This must remain at the bottom
-# of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"

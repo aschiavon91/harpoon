@@ -1,4 +1,4 @@
-defmodule Harpoon.Models.Request do
+defmodule Harpoon.Requests.Request do
   @moduledoc false
   use Ecto.Schema
 

@@ -1,8 +1,8 @@
-defmodule Harpoon.Workers.CapturedRequestsWorker do
+defmodule Harpoon.RequestCaptureWorker do
   @moduledoc false
   use GenServer
 
-  alias Harpoon.Contexts.Requests
+  alias Harpoon.Requests
 
   require Logger
 
@@ -12,7 +12,7 @@ defmodule Harpoon.Workers.CapturedRequestsWorker do
 
   @impl true
   def init(_args) do
-    case Phoenix.PubSub.subscribe(Harpoon.PubSub, "captured_requests") do
+    case Phoenix.PubSub.subscribe(Harpoon.PubSub, "requests") do
       :ok -> {:ok, []}
       err -> err
     end

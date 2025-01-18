@@ -1,7 +1,7 @@
 defmodule HarpoonWeb.HomeLiveTest do
   use HarpoonWeb.ConnCase
 
-  alias Harpoon.Contexts.Requests
+  alias Harpoon.Requests
 
   test "should add session id when dont have", %{conn: conn} do
     assert {:error, {:redirect, %{to: <<"/" <> sid>>, flash: %{}}}} = live(conn, "/")
@@ -9,7 +9,7 @@ defmodule HarpoonWeb.HomeLiveTest do
   end
 
   test "should render when already wave session id", %{conn: conn} do
-    sid = Harpoon.Utils.generate_sid()
+    sid = Harpoon.Sessions.generate_sid()
     assert {:ok, %View{}, html} = live(conn, "/#{sid}")
     assert html =~ "Nothing captured yet"
     assert html =~ "You can start making your requests!"
@@ -61,7 +61,7 @@ defmodule HarpoonWeb.HomeLiveTest do
   end
 
   defp build_ctx do
-    sid = Harpoon.Utils.generate_sid()
+    sid = Harpoon.Sessions.generate_sid()
 
     request1_params = %{
       sid: sid,

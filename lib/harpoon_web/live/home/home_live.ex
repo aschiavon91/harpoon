@@ -2,8 +2,8 @@ defmodule HarpoonWeb.HomeLive do
   @moduledoc false
   use HarpoonWeb, :live_view
 
-  alias Harpoon.Contexts.Requests
-  alias Harpoon.Models.Request
+  alias Harpoon.Requests
+  alias Harpoon.Sessions
 
   require Logger
 
@@ -15,31 +15,13 @@ defmodule HarpoonWeb.HomeLive do
   def mount(params, _session, socket) do
     case Map.get(params, "path_info") do
       [sid] ->
-        {:ok, configure_stream(socket, sid, nil)}
+        {:ok, configure_session(socket, sid, nil)}
 
       [sid, rid] ->
-        {:ok, configure_stream(socket, sid, rid)}
+        {:ok, configure_session(socket, sid, rid)}
 
       _ ->
         {:ok, redirect_to_new_session(socket)}
-    end
-  end
-
-  defp configure_stream(socket, sid, rid) do
-    if String.match?(sid, @sid_regex) do
-      if connected?(socket) do
-        Phoenix.PubSub.subscribe(Harpoon.PubSub, "requests:#{sid}")
-      end
-
-      target_url = %URI{socket.host_uri | host: "#{sid}.#{socket.host_uri.host}"}
-
-      socket
-      |> then(&if rid, do: assign(&1, :rid, rid), else: &1)
-      |> assign(:sid, sid)
-      |> assign(:target_url, URI.to_string(target_url))
-      |> stream_configure(:requests, dom_id: &"requests-#{&1.id}")
-    else
-      redirect_to_new_session(socket)
     end
   end
 
@@ -51,14 +33,16 @@ defmodule HarpoonWeb.HomeLive do
     requests = Requests.list_by_sid(sid)
     current = get_current_request(requests, rid)
     new_rid = Map.get(current || %{}, :id)
+    request_count = length(requests)
 
     socket =
       socket
       |> stream(:requests, requests)
+      |> assign(:request_count, request_count)
       |> assign(:sid, sid)
       |> assign(:rid, new_rid)
       |> assign(:current, current)
-      |> assign(page_title: "[Harpoon] SID: #{sid}")
+      |> assign(page_title: "[Harpoon] #{sid}")
       |> then(&if(is_nil(rid) && new_rid, do: push_patch(&1, to: ~p"/#{sid}/#{new_rid}"), else: &1))
 
     {:noreply, socket}
@@ -68,7 +52,7 @@ defmodule HarpoonWeb.HomeLive do
   def handle_event("delete", %{"id" => <<"requests-" <> id>>}, socket) do
     sid = socket.assigns[:sid]
 
-    case Requests.delete(%Request{id: id, sid: sid}) do
+    case Requests.delete_by_sid_and_id(sid, id) do
       {:ok, _} ->
         {:noreply, socket}
 
@@ -96,18 +80,18 @@ defmodule HarpoonWeb.HomeLive do
       socket
       |> stream_insert(:requests, req, at: 0)
       |> assign(:current, current)
+      |> update(:request_count, &(&1 + 1))
       |> put_flash(:info, "Ahoy! A new request was hooked!")
 
     {:noreply, socket}
   end
 
   @impl true
-  def handle_info({:deleted, %{id: id}}, socket) do
-    dom_id = "requests-#{id}"
-
+  def handle_info({:deleted, id}, socket) do
     socket
-    |> stream_delete_by_dom_id(:requests, dom_id)
-    |> put_flash(:info, "#{id} deleted!")
+    |> stream_delete_by_dom_id(:requests, "requests-#{id}")
+    |> put_flash(:info, "Request #{id} deleted!")
+    |> update(:request_count, &(&1 - 1))
     |> case do
       %{assigns: %{current: %{id: ^id}}} = socket -> assign(socket, :current, nil)
       socket -> socket
@@ -122,11 +106,31 @@ defmodule HarpoonWeb.HomeLive do
     socket =
       socket
       |> stream(:requests, [], reset: true)
+      |> update(:request_count, &(&1 - deleted))
       |> assign(:current, nil)
-      |> push_patch(to: ~p"/#{sid}")
+      |> push_navigate(to: ~p"/#{sid}")
       |> then(&if deleted > 0, do: put_flash(&1, :info, "all requests deleted!"), else: &1)
 
     {:noreply, socket}
+  end
+
+  defp configure_session(socket, sid, rid) do
+    if String.match?(sid, @sid_regex) do
+      if connected?(socket) do
+        Phoenix.PubSub.subscribe(Harpoon.PubSub, "requests:#{sid}")
+      end
+
+      target_url = %URI{socket.host_uri | host: "#{sid}.#{socket.host_uri.host}"}
+
+      socket
+      |> then(&if rid, do: assign(&1, :rid, rid), else: &1)
+      |> assign(:sid, sid)
+      |> assign(:target_url, URI.to_string(target_url))
+      |> assign(:request_count, 0)
+      |> stream_configure(:requests, dom_id: &"requests-#{&1.id}")
+    else
+      redirect_to_new_session(socket)
+    end
   end
 
   defp get_current_request(requests, nil) do
@@ -142,7 +146,7 @@ defmodule HarpoonWeb.HomeLive do
   end
 
   defp redirect_to_new_session(socket) do
-    sid = Harpoon.Utils.generate_sid()
+    sid = Sessions.generate_sid()
     redirect(socket, to: "/#{sid}")
   end
 end

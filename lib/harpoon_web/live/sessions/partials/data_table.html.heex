@@ -1,5 +1,5 @@
 <section class="mt-16 mx-24">
-  <div class="pt-6 ">
+  <div class="pt-6">
     <table class="w-full text-sm text-left rtl:text-right  text-gray-500 dark:text-gray-400">
       <thead class="text-xs text-gray-700 uppercase bg-gray-200 dark:bg-gray-700 dark:text-gray-400">
         <tr>
@@ -25,6 +25,9 @@
           <th scope="col" class="px-6 py-3">
             <span class="sr-only">View</span>
           </th>
+          <th scope="col" class="px-6 py-3">
+            <span class="sr-only">Delete</span>
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -36,10 +39,10 @@
             scope="row"
             class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
           >
-            <%= session.sid %>
+            {session.sid}
           </th>
           <td class="px-6 py-4">
-            <%= session.count %>
+            {session.count}
           </td>
           <td class="px-6 py-4 text-right">
             <.link
@@ -47,6 +50,16 @@
               class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
             >
               View
+            </.link>
+          </td>
+          <td class="px-6 py-4 text-right">
+            <.link
+              phx-click="delete"
+              phx-value-sid={session.sid}
+              data-confirm="Are you sure?"
+              class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+            >
+              Delete
             </.link>
           </td>
         </tr>
