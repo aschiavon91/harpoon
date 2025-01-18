@@ -5,17 +5,17 @@ defmodule Harpoon.Application do
 
   use Application
 
-  alias Harpoon.Workers.CapturedRequestsWorker
-  alias Harpoon.Workers.MigrationRunnerWorker
+  alias Harpoon.AutoMigrationWorker
+  alias Harpoon.RequestCaptureWorker
 
   @impl true
   def start(_type, _args) do
     children = [
       HarpoonWeb.Telemetry,
       Harpoon.Repo,
-      MigrationRunnerWorker,
+      AutoMigrationWorker,
       {Phoenix.PubSub, name: Harpoon.PubSub},
-      CapturedRequestsWorker,
+      RequestCaptureWorker,
       HarpoonWeb.Endpoint
     ]
 

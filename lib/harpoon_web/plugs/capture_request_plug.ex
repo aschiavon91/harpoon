@@ -24,7 +24,7 @@ defmodule HarpoonWeb.Plugs.CaptureRequestPlug do
   defp handle_subdomain_request(conn, sid) do
     with true <- String.match?(sid, ~r/([a-z]+-)([a-z]+-)\d{2}/),
          {:ok, req, conn} <- conn_to_request(conn, sid) do
-      PubSub.broadcast!(Harpoon.PubSub, "captured_requests", req)
+      PubSub.broadcast!(Harpoon.PubSub, "requests", req)
 
       conn
       |> Plug.Conn.send_resp(200, "")

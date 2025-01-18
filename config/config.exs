@@ -24,7 +24,7 @@ config :harpoon, HarpoonWeb.Endpoint,
 
 config :nanoid,
   size: 21,
-  alphabet: "_-0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+  alphabet: "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 # Configure tailwind (the version is required)
 config :tailwind,

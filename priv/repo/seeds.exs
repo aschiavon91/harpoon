@@ -10,8 +10,8 @@
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
 
-alias Harpoon.Models.Request
 alias Harpoon.Repo
+alias Harpoon.Requests.Request
 
 sid = "5bd5493b-96d7-4648-ba7b-5358978e6713"
 

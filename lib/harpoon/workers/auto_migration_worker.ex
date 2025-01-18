@@ -1,4 +1,4 @@
-defmodule Harpoon.Workers.MigrationRunnerWorker do
+defmodule Harpoon.AutoMigrationWorker do
   @moduledoc false
   use GenServer, restart: :transient
 

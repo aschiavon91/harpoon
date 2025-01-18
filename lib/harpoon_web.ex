@@ -42,7 +42,8 @@ defmodule HarpoonWeb do
         formats: [:html, :json],
         layouts: [html: HarpoonWeb.Layouts]
 
-      import HarpoonWeb.Gettext
+      use Gettext, backend: HarpoonWeb.Gettext
+
       import Plug.Conn
 
       unquote(verified_routes())
@@ -83,8 +84,9 @@ defmodule HarpoonWeb do
     quote do
       # HTML escaping functionality
       # Core UI components and translation
+      use Gettext, backend: HarpoonWeb.Gettext
+
       import HarpoonWeb.CoreComponents
-      import HarpoonWeb.Gettext
       import Phoenix.HTML
 
       # Shortcut for generating JS commands
