@@ -9,8 +9,8 @@ permissions:
 
 env:
   MIX_ENV: dev
-  OTP: "26.2.2"
-  ELIXIR: "1.16.1"
+  OTP: "27.2"
+  ELIXIR: "1.18.1"
 
 jobs:
   build:
@@ -20,7 +20,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Set up Elixir
-        uses: erlef/setup-beam@v1.18.0
+        uses: erlef/setup-beam@v1.18
         with:
           elixir-version: ${{ env.ELIXIR }}
           otp-version: ${{ env.OTP }}
