@@ -9,8 +9,8 @@ permissions:
 
 env:
   MIX_ENV: dev
-  OTP: "26.2.2"
-  ELIXIR: "1.16.1"
+  OTP: "27.2"
+  ELIXIR: "1.18.1"
 
 jobs:
   build:
