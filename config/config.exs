@@ -31,8 +31,7 @@ config :nanoid,
   size: 21,
   alphabet: "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
-# Use Jason for JSON parsing in Phoenix
-config :phoenix, :json_library, Jason
+config :phoenix, :json_library, JSON
 
 # Configure tailwind (the version is required)
 config :tailwind,
