@@ -5,7 +5,6 @@ defmodule HarpoonWeb.HomeLive do
   import HarpoonWeb.Home.Partials.RequestBodyRender
 
   alias Harpoon.Requests
-  alias Harpoon.Requests.Request
   alias Harpoon.Sessions
 
   require Logger
