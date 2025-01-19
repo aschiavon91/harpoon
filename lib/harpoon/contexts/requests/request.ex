@@ -58,10 +58,10 @@ defmodule Harpoon.Requests.Request do
 
   def get_file_type(body) do
     cond do
-      is_json(body) -> {:ok, :json}
-      is_xml(body) -> {:ok, :xml}
-      is_html(body) -> {:ok, :html}
-      is_text(body) -> {:ok, :text}
+      json?(body) -> {:ok, :json}
+      xml?(body) -> {:ok, :xml}
+      html?(body) -> {:ok, :html}
+      text?(body) -> {:ok, :text}
       true -> get_file_extension(body)
     end
   end
@@ -78,22 +78,22 @@ defmodule Harpoon.Requests.Request do
     end
   end
 
-  defp is_json(data) do
+  defp json?(data) do
     _ = JSON.decode!(data)
     true
   rescue
     _ -> false
   end
 
-  defp is_xml(data) do
+  defp xml?(data) do
     data =~ ~r/^<\?/
   end
 
-  defp is_html(data) do
+  defp html?(data) do
     data =~ ~r/^</
   end
 
-  defp is_text(data) do
+  defp text?(data) do
     String.valid?(data)
   end
 end
