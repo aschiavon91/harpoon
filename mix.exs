@@ -86,6 +86,7 @@ defmodule Harpoon.MixProject do
       {:nanoid, "~> 2.1"},
       {:cors_plug, "~> 3.0"},
       {:burrito, "~> 1.2"},
+      {:magic_number, "~> 0.0.6"},
       {:styler, "~> 1.3", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},

@@ -2,6 +2,8 @@ defmodule HarpoonWeb.HomeLive do
   @moduledoc false
   use HarpoonWeb, :live_view
 
+  import HarpoonWeb.Home.Partials.RequestBodyRender
+
   alias Harpoon.Requests
   alias Harpoon.Sessions
 

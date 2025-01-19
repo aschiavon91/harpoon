@@ -22,7 +22,7 @@ span_classes =
         <span class={"flex-0 whitespace-nowrap text-center text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full #{span_classes}"}>
           {@req.method}
         </span>
-        <span class="flex-0 whitespace-nowrap text-md">{@req.path}</span>
+        <span class="text-sm text-pretty">{@req.path}</span>
       </div>
       <div>
         <span class="text-xs">{DateTime.truncate(@req.inserted_at, :second)}</span>

@@ -35,11 +35,7 @@
         <h5 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
           Body
         </h5>
-        <pre class="language-json" readonly disabled>
-          <code id="request-body" class="rounded-lg border border-gray-300 dark:border-gray-600">
-            <%= Jason.Formatter.pretty_print(@request.body) %>
-          </code>
-        </pre>
+        <.request_body_content data={@request.body} />
       </div>
     </div>
   </div>
