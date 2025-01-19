@@ -1,4 +1,4 @@
-defmodule HarpoonWeb.Plugs.CaptureRequestPlug do
+defmodule HarpoonWeb.CaptureRequestPlug do
   @moduledoc false
   @behaviour Plug
 
@@ -41,32 +41,35 @@ defmodule HarpoonWeb.Plugs.CaptureRequestPlug do
     end
   end
 
-  defp conn_to_request(conn, sid) do
+  defp conn_to_request(conn, sid, acc \\ <<>>) do
     case Plug.Conn.read_body(conn) do
       {:ok, body, conn} ->
-        req =
-          Map.merge(
-            %{
-              sid: sid,
-              path: conn.request_path,
-              headers: Map.new(conn.req_headers),
-              body: body,
-              method: conn.method,
-              query_params: conn.query_params,
-              host: conn.host,
-              cookies: conn.req_cookies
-            },
-            parse_from_adapter_data(conn.adapter)
-          )
-
+        conn_data = parse_conn_data(conn, sid, acc <> body)
+        adapter_data = parse_from_adapter_data(conn.adapter)
+        req = Map.merge(conn_data, adapter_data)
         {:ok, req, conn}
+
+      {:more, body, conn} ->
+        conn_to_request(conn, sid, acc <> body)
 
       err ->
         err
     end
   end
 
-  # bandit
+  defp parse_conn_data(conn, sid, body) do
+    %{
+      sid: sid,
+      path: conn.request_path,
+      headers: Map.new(conn.req_headers),
+      body: body,
+      method: conn.method,
+      query_params: conn.query_params,
+      host: conn.host,
+      cookies: conn.req_cookies
+    }
+  end
+
   defp parse_from_adapter_data({_, %{transport: transport, metrics: metrics}}) do
     remote_ip = transport.socket.span.start_metadata.remote_address || {127, 0, 0, 1}
     remote_port = transport.socket.span.start_metadata.remote_port || 0

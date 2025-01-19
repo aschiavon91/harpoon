@@ -38,7 +38,7 @@ defmodule HarpoonWeb.Endpoint do
     param_key: "request_logger",
     cookie_key: "request_logger"
 
-  plug HarpoonWeb.Plugs.CaptureRequestPlug
+  plug HarpoonWeb.CaptureRequestPlug
 
   plug Plug.RequestId
   plug Plug.Telemetry, event_prefix: [:phoenix, :endpoint]
