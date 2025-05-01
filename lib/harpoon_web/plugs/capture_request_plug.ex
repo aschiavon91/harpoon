@@ -27,7 +27,7 @@ defmodule HarpoonWeb.CaptureRequestPlug do
       PubSub.broadcast!(Harpoon.PubSub, "requests", req)
 
       conn
-      |> Plug.Conn.send_resp(200, "")
+      |> Plug.Conn.send_resp(200, JSON.encode!(req))
       |> Plug.Conn.halt()
     else
       {:error, reason} ->
